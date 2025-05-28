@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<package format="2">
+    <name>cppbox</name>
+    <version>0.0.1</version>
+    <description>cppbox</description>
+    <maintainer email="william.talbot97@gmail.com">William Talbot</maintainer>
+    <license>BSD-3_Clause</license>
+    <url type="repository">https://github.com/leggedrobotics/cppbox</url>
+    <author email="william.talbot97@gmail.com">William Talbot</author>
+
+    <buildtool_depend>cmake</buildtool_depend>
+
+    <export>
+        <build_type>cmake</build_type>
+    </export>
+</package>
