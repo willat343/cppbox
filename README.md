@@ -10,8 +10,7 @@ Collection of general-purpose C++ functions, classes and utilities
 git clone git@github.com:willat343/cppbox.git
 cd cppbox
 cmake -S . -B build -DBUILD_DOCUMENTATION=OFF -DBUILD_TESTS=OFF
-cmake --build build
-cmake --build . -j
+cmake --build build -j
 sudo cmake --build build --target install
 ```
 
