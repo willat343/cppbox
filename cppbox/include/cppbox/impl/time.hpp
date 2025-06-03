@@ -1,5 +1,5 @@
-#ifndef MATHBOX_IMPL_TIME_HPP
-#define MATHBOX_IMPL_TIME_HPP
+#ifndef CPPBOX_IMPL_TIME_HPP
+#define CPPBOX_IMPL_TIME_HPP
 
 #include "cppbox/time.hpp"
 
