@@ -5,6 +5,9 @@ project(cppbox
     LANGUAGES CXX
 )
 
+# Installation directories
+include(GNUInstallDirs)
+
 # CMake Build Type
 if (NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
     set(CMAKE_BUILD_TYPE "Release" CACHE STRING "Choose build type" FORCE)
@@ -22,22 +25,21 @@ string(REPLACE "." ";" CMAKE_CXX_COMPILER_VERSION_LIST ${CMAKE_CXX_COMPILER_VERS
 list(GET CMAKE_CXX_COMPILER_VERSION_LIST 0 CMAKE_CXX_COMPILER_VERSION_MAJOR)
 list(GET CMAKE_CXX_COMPILER_VERSION_LIST 1 CMAKE_CXX_COMPILER_VERSION_MINOR)
 
-# Installation directories
-include(GNUInstallDirs)
-
-# Build library
-add_library(${PROJECT_NAME} SHARED
+# Build Library
+set(LIBRARY_NAME ${PROJECT_NAME})
+add_library(${LIBRARY_NAME} SHARED
     src/parse.cpp
 )
+add_library(${PROJECT_NAME}::${LIBRARY_NAME} ALIAS ${LIBRARY_NAME})
 
-# Include directories
-target_include_directories(${PROJECT_NAME} PUBLIC
+# Include Directories
+target_include_directories(${LIBRARY_NAME} PUBLIC
     $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
     $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
 )
 
 # Properties
-set_target_properties(${PROJECT_NAME} PROPERTIES
+set_target_properties(${LIBRARY_NAME} PROPERTIES
     CXX_STANDARD 20
     CXX_STANDARD_REQUIRED ON
 )
@@ -45,9 +47,9 @@ set_target_properties(${PROJECT_NAME} PROPERTIES
 # Compile Options
 if (CMAKE_CXX_COMPILER_VERSION_MAJOR EQUAL 9)
     # Add experimental concepts flag
-    target_compile_options(${PROJECT_NAME} PUBLIC -fconcepts)
+    target_compile_options(${LIBRARY_NAME} PUBLIC -fconcepts)
 endif()
-target_compile_options(${PROJECT_NAME} PRIVATE
+target_compile_options(${LIBRARY_NAME} PRIVATE
     -Wall -Wextra -Wpedantic
 )
 
@@ -78,7 +80,7 @@ configure_package_config_file(${CMAKE_CURRENT_SOURCE_DIR}/cmake/config.cmake.in
 
 # Installation
 install(
-    TARGETS ${PROJECT_NAME}
+    TARGETS ${LIBRARY_NAME}
     EXPORT ${PROJECT_NAME}
     PUBLIC_HEADER DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/${PROJECT_NAME}"
     ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
