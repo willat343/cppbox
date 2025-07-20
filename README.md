@@ -10,8 +10,8 @@ Collection of general-purpose C++ functions, classes and utilities
 | [cmakebox](https://github.com/willat343/cmakebox) | >= 0.0.1 | CMake Functions and Utilities |
 
 There are several ways to include `cppbox` within your project:
-- [Preferred] Via `FetchContent` allowing `cppbox` to be built as a submodule.
-- Via `find_package`, requiring `cppbox` to be installed to the system, locally, or to a catkin workspace.
+- [Preferred] Via `FetchContent` allowing package to be built as a submodule.
+- Via `find_package`, requiring package to be installed to the system, locally, or to a catkin workspace.
 
 ## Include via FetchContent
 
