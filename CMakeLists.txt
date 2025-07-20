@@ -1,29 +1,45 @@
-cmake_minimum_required(VERSION 3.10)
+cmake_minimum_required(VERSION 3.21)
 project(cppbox
     VERSION 0.0.4
     DESCRIPTION "Collection of general-purpose C++ functions, classes and utilities"
     LANGUAGES CXX
 )
 
-# Installation directories
+## Include Standard CMake Packages
+# GNUInstallDirs for Install directories
 include(GNUInstallDirs)
-
-# CMake Build Type
-if (NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
-    set(CMAKE_BUILD_TYPE "Release" CACHE STRING "Choose build type" FORCE)
-    set_property(CACHE CMAKE_BUILD_TYPE PROPERTY STRINGS "Debug" "Release" "RelWithDebInfo" "MinSizeRel" )
-endif()
-message(STATUS "Build type set to ${CMAKE_BUILD_TYPE}")
+# FetchContent for dependencies
+include(FetchContent)
+# CTest for BUILD_TESTING option (default ON)
+include(CTest)
+# Package version and config file generation
+include(CMakePackageConfigHelpers)
 
 # General Options
 option(BUILD_DOCUMENTATION "Build Doxygen Documentation" OFF)
-option(BUILD_TESTS "Build Tests" OFF)
+option(DEVELOPER_MODE "Use local versions of cmakebox" OFF)
 
-# Get information about the CXX Compiler
-message(STATUS "Detected ${CMAKE_CXX_COMPILER_ID} CXX compiler version ${CMAKE_CXX_COMPILER_VERSION}")
-string(REPLACE "." ";" CMAKE_CXX_COMPILER_VERSION_LIST ${CMAKE_CXX_COMPILER_VERSION})
-list(GET CMAKE_CXX_COMPILER_VERSION_LIST 0 CMAKE_CXX_COMPILER_VERSION_MAJOR)
-list(GET CMAKE_CXX_COMPILER_VERSION_LIST 1 CMAKE_CXX_COMPILER_VERSION_MINOR)
+# Configure FetchContent source directories for DEVELOPER_MODE
+if (DEVELOPER_MODE)
+    set(FETCHCONTENT_SOURCE_DIR_CMAKEBOX "${CMAKE_SOURCE_DIR}/dependencies/cmakebox")
+endif()
+
+# Dependency: cmakebox
+set(CMAKEBOX_VERSION "0.0.1")
+FetchContent_Declare(
+    cmakebox
+    GIT_REPOSITORY git@github.com:willat343/cmakebox.git
+    GIT_TAG v${CMAKEBOX_VERSION}
+)
+FetchContent_MakeAvailable(cmakebox)
+list(APPEND CMAKE_MODULE_PATH "${cmakebox_SOURCE_DIR}/cmake")
+include(CMakeBox)
+
+# CMake Build Type
+setup_build_type()
+
+# Get CXX Compiler Information
+get_cxx_compiler_info()
 
 # Build Library
 set(LIBRARY_NAME ${PROJECT_NAME})
@@ -31,19 +47,16 @@ add_library(${LIBRARY_NAME} SHARED
     src/parse.cpp
 )
 add_library(${PROJECT_NAME}::${LIBRARY_NAME} ALIAS ${LIBRARY_NAME})
-
 # Include Directories
 target_include_directories(${LIBRARY_NAME} PUBLIC
     $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
     $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
 )
-
 # Properties
 set_target_properties(${LIBRARY_NAME} PROPERTIES
     CXX_STANDARD 20
     CXX_STANDARD_REQUIRED ON
 )
-
 # Compile Options
 if (CMAKE_CXX_COMPILER_VERSION_MAJOR EQUAL 9)
     # Add experimental concepts flag
@@ -54,20 +67,6 @@ target_compile_options(${LIBRARY_NAME} PRIVATE
 )
 
 # Configure package version and config files
-include(CMakePackageConfigHelpers)
-write_basic_package_version_file(
-    "${PROJECT_BINARY_DIR}/${PROJECT_NAME}-config-version.cmake"
-    VERSION ${PROJECT_VERSION}
-    COMPATIBILITY AnyNewerVersion
-)
-configure_package_config_file(${CMAKE_CURRENT_SOURCE_DIR}/cmake/config.cmake.in
-    ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}-config.cmake
-    INSTALL_DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/${PROJECT_NAME}
-)
-
-## Install Library
-# Configure package version and config files
-include(CMakePackageConfigHelpers)
 write_basic_package_version_file(
     "${PROJECT_BINARY_DIR}/${PROJECT_NAME}-config-version.cmake"
     VERSION ${PROJECT_VERSION}
@@ -89,9 +88,9 @@ install(
 )
 install(
     EXPORT ${PROJECT_NAME}
-    DESTINATION ${PROJECT_NAME}
-    FILE ${PROJECT_NAME}-export.cmake
     DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/${PROJECT_NAME}
+    NAMESPACE ${PROJECT_NAME}::
+    FILE ${PROJECT_NAME}-export.cmake
 )
 install(
     FILES
@@ -106,6 +105,14 @@ install(
         PATTERN "*.hpp"
         PATTERN "*.h"
 )
+
+# Build-Tree Export
+export(
+    EXPORT ${PROJECT_NAME}
+    NAMESPACE ${PROJECT_NAME}::
+    FILE "${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}-build-export.cmake"
+)
+export(PACKAGE ${PROJECT_NAME})
 
 # Uninstallation
 if(NOT TARGET uninstall AND PROJECT_IS_TOP_LEVEL)
