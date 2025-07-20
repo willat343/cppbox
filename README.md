@@ -7,7 +7,7 @@ Collection of general-purpose C++ functions, classes and utilities
 | **Dependency** | **Version** | **Description** |
 |----------------|-------------|-----------------|
 | CMake | >= 3.21 | CMake Build Tool |
-| [cmakebox](https://github.com/willat343/cppbox) | >= 0.0.1 | CMake Functions and Utilities |
+| [cmakebox](https://github.com/willat343/cmakebox) | >= 0.0.1 | CMake Functions and Utilities |
 
 There are several ways to include `cppbox` within your project:
 - [Preferred] Via `FetchContent` allowing `cppbox` to be built as a submodule.
@@ -15,7 +15,7 @@ There are several ways to include `cppbox` within your project:
 
 ## Include via FetchContent
 
-It is recommended to leverage the functionality of [cmakebox](https://github.com/willat343/cppbox) by including the following lines in the `CMakeLists.txt` (replace `X.Y.Z` with version):
+It is recommended to leverage the functionality of [cmakebox](https://github.com/willat343/cmakebox) by including the following lines in the `CMakeLists.txt` (replace `X.Y.Z` with version):
 ```CMake
 set(CMAKEBOX_VERSION "0.0.1")
 FetchContent_Declare(
@@ -38,7 +38,7 @@ import_dependency(
 )
 ```
 
-Without relying on [cmakebox](https://github.com/willat343/cppbox), this can be achieved with (replace `X.Y.Z` with version):
+Without relying on [cmakebox](https://github.com/willat343/cmakebox), this can be achieved with (replace `X.Y.Z` with version):
 ```CMake
 set(CPPBOX_VERSION "X.Y.Z")
 FetchContent_Declare(
@@ -114,13 +114,6 @@ cd /path/to/catkin_ws
 catkin build cppbox
 ```
 
-### Uninstallation
-
-```bash
-cd /path/to/catkin_ws
-catkin clean cppbox
-```
-
 ### Include
 
 To use the package in a downstream project, one should add to their `package.xml`:
@@ -132,4 +125,11 @@ One can then include `cppbox` package by includeing in the `CMakeLists.txt`:
 ```CMake
 find_package(cppbox REQUIRED)
 target_link_libraries(<target> PUBLIC cppbox::cppbox)
+```
+
+### Clean
+
+```bash
+cd /path/to/catkin_ws
+catkin clean cppbox
 ```
