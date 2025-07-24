@@ -44,6 +44,7 @@ get_cxx_compiler_info()
 # Build Library
 set(LIBRARY_NAME ${PROJECT_NAME})
 add_library(${LIBRARY_NAME} SHARED
+    src/bytes.cpp
     src/parse.cpp
 )
 add_library(${PROJECT_NAME}::${LIBRARY_NAME} ALIAS ${LIBRARY_NAME})
