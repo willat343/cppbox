@@ -2,6 +2,7 @@
 #define CPPBOX_TIME_HPP
 
 #include <chrono>
+#include <string>
 #include <vector>
 
 namespace cppbox {
@@ -33,8 +34,8 @@ constexpr bool is_duration_v = is_duration<T>::value;
 
 /**
  * @brief Duration concept.
- * 
- * @tparam T 
+ *
+ * @tparam T
  */
 template<typename T>
 concept IsDuration = is_duration_v<T>;
@@ -66,8 +67,8 @@ constexpr bool is_time_point_v = is_time_point<T>::value;
 
 /**
  * @brief Time point concept.
- * 
- * @tparam T 
+ *
+ * @tparam T
  */
 template<typename T>
 concept IsTimePoint = is_time_point_v<T>;
@@ -82,8 +83,8 @@ constexpr bool is_time_point_or_duration_v = is_time_point_v<T> || is_duration_v
 
 /**
  * @brief Time point or duration concept.
- * 
- * @tparam T 
+ *
+ * @tparam T
  */
 template<typename T>
 concept IsTimePointOrDuration = is_time_point_or_duration_v<T>;
@@ -123,6 +124,16 @@ constexpr Scalar to_sec(const TimeOrDuration& time_or_duration);
 template<typename Scalar = double, class TimeOrDuration = Scalar>
     requires(std::is_arithmetic_v<TimeOrDuration> || is_time_point_or_duration_v<TimeOrDuration>)
 std::vector<Scalar> to_secs(const std::vector<TimeOrDuration>& times_or_durations);
+
+/**
+ * @brief Convert time or duration to string of format "seconds.nanoseconds".
+ *
+ * @tparam TimeOrDuration
+ * @param time_or_duration
+ * @return std::string
+ */
+template<IsTimePointOrDuration TimeOrDuration>
+std::string to_string(const TimeOrDuration& time_or_duration);
 
 /**
  * @brief Convert seconds to time (since clock epoch).

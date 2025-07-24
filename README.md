@@ -32,7 +32,7 @@ import_dependency(
     cppbox
     TARGET cppbox::cppbox
     VERSION ${CPPBOX_VERSION}
-    USE_SYSTEM_REQUIRED_VERSION ${CPPBOX_VERSION}
+    USE_FIND_PACKAGE_REQUIRED_VERSION ${CPPBOX_VERSION}
     GIT_REPOSITORY git@github.com:willat343/cppbox
     GIT_TAG v${CPPBOX_VERSION}
 )

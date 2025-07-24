@@ -1,6 +1,9 @@
 #ifndef CPPBOX_IMPL_TIME_HPP
 #define CPPBOX_IMPL_TIME_HPP
 
+#include <iomanip>
+#include <sstream>
+
 #include "cppbox/time.hpp"
 
 namespace cppbox {
@@ -38,6 +41,20 @@ std::vector<Scalar> to_secs(const std::vector<TimeOrDuration>& times_or_duration
     std::transform(times_or_durations.cbegin(), times_or_durations.cend(), seconds.begin(),
             to_sec<Scalar, TimeOrDuration>);
     return seconds;
+}
+
+template<IsTimePointOrDuration TimeOrDuration>
+std::string to_string(const TimeOrDuration& time_or_duration) {
+    if constexpr (is_time_point_v<TimeOrDuration>) {
+        return to_string(time_or_duration.time_since_epoch());
+    } else if constexpr (is_duration_v<TimeOrDuration>) {
+        std::stringstream ss;
+        ss << time_or_duration / std::chrono::seconds(1) << "." << std::setw(9) << std::setfill('0')
+           << std::abs((time_or_duration % std::chrono::seconds(1)) / std::chrono::nanoseconds(1));
+        return ss.str();
+    } else {
+        throw std::runtime_error("TimeOrDuration type not handled");
+    }
 }
 
 template<class Time, typename Scalar>
