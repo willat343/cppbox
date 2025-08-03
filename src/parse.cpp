@@ -1,9 +1,26 @@
 #include "cppbox/parse.hpp"
 
 #include <algorithm>
+#include <numeric>
 #include <sstream>
 
 namespace cppbox {
+
+std::string join(const std::vector<std::string>& strings, const std::string& delimiter) {
+    return strings.empty() ? std::string()
+                           : std::accumulate(std::next(strings.cbegin()), strings.cend(), strings[0],
+                                     [&delimiter](const std::string& lhs, const std::string& rhs) {
+                                         return lhs + delimiter + rhs;
+                                     });
+}
+
+std::size_t max_size(const std::vector<std::string>& strings) {
+    return strings.empty()
+                   ? 0
+                   : std::max_element(strings.cbegin(), strings.cend(), [](const auto& string1, const auto& string2) {
+                         return string1.size() < string2.size();
+                     })->size();
+}
 
 std::vector<std::string> split_by_char(const std::string& input, const char delim) {
     std::vector<std::string> output;
