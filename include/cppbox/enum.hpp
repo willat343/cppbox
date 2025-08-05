@@ -33,14 +33,6 @@
  * }
  * ```
  *
- * To allow smart enums to be defined within classes, this macro cannot create free functions (e.g. for operators).
- * Hence an additional macro `CREATE_SMART_ENUM_FREE_FUNCTIONS(FullScopeSmartEnum)` is available to create additional
- * optional but useful functions, such as additional operators which must be free. Here `FullScopeSmartEnum` is the full
- * scope to the `SmartEnum`, e.g. my_namespace::MyClass::MySmartEnum. For smart enums where the full scope is
- * templated, (e.g. my_namespace::MyClass<T>::MySmartEnum, an additional macro
- * `CREATE_SMART_ENUM_TEMPLATED_FREE_FUNCTIONS(FullScopeSmartEnum, Template)` is avaiable where `Template` is the full
- * template descriptor, e.g. `template<typename T>`).
- *
  */
 #define CREATE_SMART_ENUM(SmartEnum, ...)                                                                     \
     class SmartEnum {                                                                                         \
@@ -78,47 +70,31 @@
             }                                                                                                 \
         }                                                                                                     \
                                                                                                               \
-        bool operator==(const SmartEnum rhs) const {                                                          \
+        friend inline std::ostream& operator<<(std::ostream& os, const SmartEnum rhs) {                       \
+            os << std::string(rhs);                                                                           \
+            return os;                                                                                        \
+        }                                                                                                     \
+        friend inline bool operator==(const SmartEnum::Identifiers lhs, const SmartEnum rhs) {                \
+            return lhs == rhs();                                                                              \
+        }                                                                                                     \
+        friend inline bool operator!=(const SmartEnum::Identifiers lhs, const SmartEnum rhs) {                \
+            return !(lhs == rhs);                                                                             \
+        }                                                                                                     \
+        inline bool operator==(const SmartEnum rhs) const {                                                   \
             return identifier == rhs();                                                                       \
         }                                                                                                     \
-        bool operator!=(const SmartEnum rhs) const {                                                          \
+        inline bool operator!=(const SmartEnum rhs) const {                                                   \
             return !(this->operator==(rhs));                                                                  \
         }                                                                                                     \
-        bool operator==(const Identifiers rhs) const {                                                        \
+        inline bool operator==(const Identifiers rhs) const {                                                 \
             return identifier == rhs;                                                                         \
         }                                                                                                     \
-        bool operator!=(const Identifiers rhs) const {                                                        \
+        inline bool operator!=(const Identifiers rhs) const {                                                 \
             return !(this->operator==(rhs));                                                                  \
         }                                                                                                     \
                                                                                                               \
     private:                                                                                                  \
         Identifiers identifier;                                                                               \
     };
-
-#define CREATE_SMART_ENUM_TEMPLATED_FREE_FUNCTIONS(FullScopeSmartEnum, Template)                        \
-    Template inline std::ostream& operator<<(std::ostream& os, const typename FullScopeSmartEnum rhs) { \
-        os << std::string(rhs);                                                                         \
-        return os;                                                                                      \
-    }                                                                                                   \
-    Template inline bool operator==(const typename FullScopeSmartEnum::Identifiers lhs,                 \
-            const typename FullScopeSmartEnum rhs) {                                                    \
-        return lhs == rhs();                                                                            \
-    }                                                                                                   \
-    Template inline bool operator!=(const typename FullScopeSmartEnum::Identifiers lhs,                 \
-            const typename FullScopeSmartEnum rhs) {                                                    \
-        return !(lhs == rhs);                                                                           \
-    }
-
-#define CREATE_SMART_ENUM_FREE_FUNCTIONS(FullScopeSmartEnum)                                          \
-    inline std::ostream& operator<<(std::ostream& os, const FullScopeSmartEnum rhs) {                 \
-        os << std::string(rhs);                                                                       \
-        return os;                                                                                    \
-    }                                                                                                 \
-    inline bool operator==(const FullScopeSmartEnum::Identifiers lhs, const FullScopeSmartEnum rhs) { \
-        return lhs == rhs();                                                                          \
-    }                                                                                                 \
-    inline bool operator!=(const FullScopeSmartEnum::Identifiers lhs, const FullScopeSmartEnum rhs) { \
-        return !(lhs == rhs);                                                                         \
-    }
 
 #endif
