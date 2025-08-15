@@ -40,4 +40,26 @@
             FE5, FE4, FE3, FE2, FE1, FE0)                                                                            \
     (MACRO, ##__VA_ARGS__)
 
+/**
+ * @brief The `GLUE` macro combines two strings together.
+ *
+ */
+#define GLUE(left, right) left##right
+
+/**
+ * @brief The `DISPATCH_GLUE` macro enables a two-step expansion of the left and right arguments before gluing,
+ * useful for VA_NARGS for macro selection.
+ *
+ */
+#define DISPATCH_GLUE(left, right) GLUE(left, right)
+
+// Implementation for VA_NARGS macro
+#define VA_NARGS_IMPL(_0, _1, _2, _3, _4, _5, _6, _7, _8, _9, N, ...) N
+
+/**
+ * @brief The `VA_NARGS` returns the number of arguments when in range 0 to 9.
+ *
+ */
+#define VA_NARGS(...) VA_NARGS_IMPL(_0, ##__VA_ARGS__, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0)
+
 #endif
