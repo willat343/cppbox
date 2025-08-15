@@ -5,6 +5,8 @@
 #include <stdexcept>
 #include <string>
 
+#include "cppbox/exceptions.hpp"
+
 namespace cppbox {
 
 BytesDecoder::BytesDecoder(const std::byte* bytes_, const std::size_t size_) : BytesDecoder(bytes_, size_, nullptr) {}
@@ -39,11 +41,10 @@ std::string BytesDecoder::to_hex_string(const std::size_t num_bytes, const std::
 }
 
 void BytesDecoder::throw_if_insufficient_bytes_remaining(const std::size_t num_bytes) const {
-    if (insufficient_bytes_remaining(num_bytes)) {
-        throw std::runtime_error("BytesDecoder: Buffer overflow in message parsing when trying to read " +
-                                 std::to_string(num_bytes) + " bytes when only " + std::to_string(bytes_remaining()) +
-                                 "/" + std::to_string(size()) + " bytes remaining.");
-    }
+    throw_if(insufficient_bytes_remaining(num_bytes),
+            "BytesDecoder: Buffer overflow in message parsing when trying to read " + std::to_string(num_bytes) +
+                    " bytes when only " + std::to_string(bytes_remaining()) + "/" + std::to_string(size()) +
+                    " bytes remaining.");
 }
 
 }

@@ -15,8 +15,6 @@ constexpr inline Duration to_duration(const Scalar seconds) {
         return static_cast<Duration>(seconds);
     } else if constexpr (is_duration_v<Duration>) {
         return std::chrono::duration_cast<Duration>(std::chrono::duration<Scalar>(seconds));
-    } else {
-        throw std::runtime_error("Duration type not handled");
     }
 }
 
@@ -29,8 +27,6 @@ constexpr inline Scalar to_sec(const TimeOrDuration& time_or_duration) {
         return to_sec<Scalar, typename TimeOrDuration::duration>(time_or_duration.time_since_epoch());
     } else if constexpr (is_duration_v<TimeOrDuration>) {
         return std::chrono::duration<Scalar>(time_or_duration).count();
-    } else {
-        throw std::runtime_error("TimeOrDuration type not handled");
     }
 }
 
@@ -52,8 +48,6 @@ std::string to_string(const TimeOrDuration& time_or_duration) {
         ss << time_or_duration / std::chrono::seconds(1) << "." << std::setw(9) << std::setfill('0')
            << std::abs((time_or_duration % std::chrono::seconds(1)) / std::chrono::nanoseconds(1));
         return ss.str();
-    } else {
-        throw std::runtime_error("TimeOrDuration type not handled");
     }
 }
 
