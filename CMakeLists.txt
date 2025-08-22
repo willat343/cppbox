@@ -48,7 +48,6 @@ set(LIBRARY_NAME ${PROJECT_NAME})
 if (CPPBOX_HEADER_ONLY)
     # Interface Library
     add_library(${LIBRARY_NAME} INTERFACE)
-    target_compile_definitions(${LIBRARY_NAME} INTERFACE CPPBOX_HEADER_ONLY=1)
     set(PUBLIC_OR_INTERFACE INTERFACE)
 else()
     # Shared/Static Library (determined by BUILD_SHARED_LIBS)
@@ -56,7 +55,6 @@ else()
         src/bytes.cpp
         src/parse.cpp
     )
-    target_compile_definitions(${LIBRARY_NAME} PUBLIC CPPBOX_HEADER_ONLY=0)
     set(PUBLIC_OR_INTERFACE PUBLIC)
 
     # Private Compile Options
@@ -77,6 +75,11 @@ set_target_properties(${LIBRARY_NAME} PROPERTIES
     CXX_STANDARD 20
     CXX_STANDARD_REQUIRED ON
     POSITION_INDEPENDENT_CODE ON
+)
+
+# Compile Definitions
+target_compile_definitions(${LIBRARY_NAME} ${PUBLIC_OR_INTERFACE}
+    CPPBOX_HEADER_ONLY=$<IF:$<BOOL:${CPPBOX_HEADER_ONLY}>,1,0>
 )
 
 # Public Compile Options
