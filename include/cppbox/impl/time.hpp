@@ -32,7 +32,7 @@ constexpr inline Scalar to_sec(const TimeOrDuration& time_or_duration) {
 
 template<typename Scalar, class TimeOrDuration>
     requires(std::is_arithmetic_v<TimeOrDuration> || is_time_point_or_duration_v<TimeOrDuration>)
-std::vector<Scalar> to_secs(const std::vector<TimeOrDuration>& times_or_durations) {
+inline std::vector<Scalar> to_secs(const std::vector<TimeOrDuration>& times_or_durations) {
     std::vector<Scalar> seconds(times_or_durations.size());
     std::transform(times_or_durations.cbegin(), times_or_durations.cend(), seconds.begin(),
             to_sec<Scalar, TimeOrDuration>);
@@ -40,7 +40,7 @@ std::vector<Scalar> to_secs(const std::vector<TimeOrDuration>& times_or_duration
 }
 
 template<IsTimePointOrDuration TimeOrDuration>
-std::string to_string(const TimeOrDuration& time_or_duration) {
+inline std::string to_string(const TimeOrDuration& time_or_duration) {
     if constexpr (is_time_point_v<TimeOrDuration>) {
         return to_string(time_or_duration.time_since_epoch());
     } else if constexpr (is_duration_v<TimeOrDuration>) {

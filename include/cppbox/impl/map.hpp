@@ -8,7 +8,7 @@
 namespace cppbox {
 
 template<class Key, class T, class Compare, class Allocator>
-std::string to_string(const std::map<Key, T, Compare, Allocator>& map) {
+inline std::string to_string(const std::map<Key, T, Compare, Allocator>& map) {
     std::stringstream ss;
     for (const auto& [k, v] : map) {
         ss << k << ": " << v << "\n";

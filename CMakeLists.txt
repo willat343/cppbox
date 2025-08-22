@@ -17,6 +17,8 @@ include(CMakePackageConfigHelpers)
 
 # General Options
 option(BUILD_DOCUMENTATION "Build Doxygen Documentation" OFF)
+option(BUILD_SHARED_LIBS "Build shared library (if CPPBOX_HEADER_ONLY=OFF)" OFF)
+option(CPPBOX_HEADER_ONLY "Build library as header-only" OFF)
 option(DEVELOPER_MODE "Use local versions of cmakebox" OFF)
 
 # Configure FetchContent source directories for DEVELOPER_MODE
@@ -43,29 +45,45 @@ get_cxx_compiler_info()
 
 # Build Library
 set(LIBRARY_NAME ${PROJECT_NAME})
-add_library(${LIBRARY_NAME} SHARED
-    src/bytes.cpp
-    src/parse.cpp
-)
+if (CPPBOX_HEADER_ONLY)
+    # Interface Library
+    add_library(${LIBRARY_NAME} INTERFACE)
+    target_compile_definitions(${LIBRARY_NAME} INTERFACE CPPBOX_HEADER_ONLY=1)
+    set(PUBLIC_OR_INTERFACE INTERFACE)
+else()
+    # Shared/Static Library (determined by BUILD_SHARED_LIBS)
+    add_library(${LIBRARY_NAME}
+        src/bytes.cpp
+        src/parse.cpp
+    )
+    target_compile_definitions(${LIBRARY_NAME} PUBLIC CPPBOX_HEADER_ONLY=0)
+    set(PUBLIC_OR_INTERFACE PUBLIC)
+
+    # Private Compile Options
+    target_compile_options(${LIBRARY_NAME} PRIVATE
+        -Wall -Wextra -Wpedantic
+    )
+endif()
 add_library(${PROJECT_NAME}::${LIBRARY_NAME} ALIAS ${LIBRARY_NAME})
+
 # Include Directories
-target_include_directories(${LIBRARY_NAME} PUBLIC
+target_include_directories(${LIBRARY_NAME} ${PUBLIC_OR_INTERFACE}
     $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
     $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
 )
+
 # Properties
 set_target_properties(${LIBRARY_NAME} PROPERTIES
     CXX_STANDARD 20
     CXX_STANDARD_REQUIRED ON
+    POSITION_INDEPENDENT_CODE ON
 )
-# Compile Options
+
+# Public Compile Options
 if (CMAKE_CXX_COMPILER_VERSION_MAJOR EQUAL 9)
     # Add experimental concepts flag
-    target_compile_options(${LIBRARY_NAME} PUBLIC -fconcepts)
+    target_compile_options(${LIBRARY_NAME} ${PUBLIC_OR_INTERFACE} -fconcepts)
 endif()
-target_compile_options(${LIBRARY_NAME} PRIVATE
-    -Wall -Wextra -Wpedantic
-)
 
 # Configure package version and config files
 write_basic_package_version_file(

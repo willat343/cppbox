@@ -10,6 +10,13 @@
 
 namespace cppbox {
 
+inline BytesDecoder::BytesDecoder(const std::byte* bytes_, const std::size_t size_)
+    : BytesDecoder(bytes_, size_, nullptr) {}
+
+inline BytesDecoder BytesDecoder::create_internal_decoder(const std::size_t internal_size) {
+    return BytesDecoder{bytes() + offset(), internal_size, this};
+}
+
 inline std::size_t BytesDecoder::bytes_remaining() const {
     return size() - offset();
 }
@@ -85,6 +92,9 @@ inline std::size_t BytesDecoder::size() const {
     return size_;
 }
 
+inline BytesDecoder::BytesDecoder(const std::byte* bytes_, const std::size_t size_, BytesDecoder* parent_decoder_)
+    : bytes_(bytes_), size_(size_), offset_(0), parent_decoder_(parent_decoder_) {}
+
 inline void BytesDecoder::increment_offset(const std::size_t num_bytes) {
     assert(num_bytes <= size_);
     offset_ += num_bytes;
@@ -103,5 +113,9 @@ inline BytesDecoder* BytesDecoder::parent_decoder() {
 }
 
 }
+
+#if CPPBOX_HEADER_ONLY
+#include "bytes.impl.hpp"
+#endif
 
 #endif
