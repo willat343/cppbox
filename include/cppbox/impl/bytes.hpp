@@ -39,6 +39,10 @@ inline void BytesDecoder::ignore(const std::size_t string_length, const std::siz
     increment_offset(string_length * num_ignore);
 }
 
+inline void BytesDecoder::ignore_remaining() {
+    increment_offset(bytes_remaining());
+}
+
 inline bool BytesDecoder::insufficient_bytes_remaining(std::size_t num_bytes) const {
     return num_bytes > bytes_remaining();
 }

@@ -27,6 +27,8 @@ public:
         requires(std::is_same_v<T, std::string>)
     void ignore(const std::size_t string_length, const std::size_t num_ignore = 1);
 
+    void ignore_remaining();
+
     bool insufficient_bytes_remaining(std::size_t num_bytes) const;
 
     bool is_finished() const;
