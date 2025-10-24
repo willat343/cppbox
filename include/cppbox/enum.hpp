@@ -38,16 +38,30 @@
 #define CREATE_SMART_ENUM(SmartEnum, ...)                                                                    \
     class SmartEnum {                                                                                        \
     public:                                                                                                  \
-        enum Identifiers { FOR_EACH(ADD_COMMA, __VA_ARGS__) };                                               \
+        enum Identifiers : std::size_t { FOR_EACH(ADD_COMMA, __VA_ARGS__) };                                 \
                                                                                                              \
         SmartEnum() {};                                                                                      \
                                                                                                              \
         SmartEnum(const Identifiers identifier) : identifier(identifier) {}                                  \
                                                                                                              \
-        SmartEnum(const std::string& string) {                                                               \
+        template<std::integral Integer>                                                                      \
+            requires(!std::same_as<Integer, bool>)                                                           \
+        explicit SmartEnum(const Integer index) {                                                            \
+            if constexpr (std::is_signed_v<Integer>) {                                                       \
+                throw_if(index < 0, "Cannot create from index < 0.");                                        \
+            }                                                                                                \
+            throw_if(static_cast<std::size_t>(index) >= count(), "Cannot create from index > count()).");    \
+            identifier = static_cast<Identifiers>(index);                                                    \
+        }                                                                                                    \
+                                                                                                             \
+        explicit SmartEnum(const std::string& string) {                                                      \
             FOR_EACH(CREATE_SMART_ENUM_IMPL_ADD_IF_ELSE_CASE_CONSTRUCTOR_STRING, __VA_ARGS__) {              \
                 throw_here("Failed to convert " #SmartEnum " from string \"" + string + "\".");              \
             }                                                                                                \
+        }                                                                                                    \
+                                                                                                             \
+        static constexpr inline std::size_t count() {                                                        \
+            return VA_NARGS(__VA_ARGS__);                                                                    \
         }                                                                                                    \
                                                                                                              \
         inline Identifiers operator()() const {                                                              \
