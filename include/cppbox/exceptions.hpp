@@ -77,7 +77,7 @@
  * @brief Ignore unused variables. Often useful in conjunction with not_implemented();
  *
  * Example:
- *  ignore_unused(my_var, my_other_var)
+ *  ignore_unused(my_var, my_other_var);
  *
  */
 #define ignore_unused(...) FOR_EACH(IGNORE_UNUSED_IMPL, __VA_ARGS__)
