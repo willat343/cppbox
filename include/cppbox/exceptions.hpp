@@ -70,4 +70,16 @@
  */
 #define not_implemented(...) DISPATCH_GLUE(NOT_IMPLEMENTED_IMPL_, VA_NARGS(__VA_ARGS__))(__VA_ARGS__)
 
+// Implementation macro: ignore unused variable
+#define IGNORE_UNUSED_IMPL(variable) (void)variable;
+
+/**
+ * @brief Ignore unused variables. Often useful in conjunction with not_implemented();
+ *
+ * Example:
+ *  ignore_unused(my_var, my_other_var)
+ *
+ */
+#define ignore_unused(...) FOR_EACH(IGNORE_UNUSED_IMPL, __VA_ARGS__)
+
 #endif
