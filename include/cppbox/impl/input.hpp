@@ -7,7 +7,7 @@ namespace cppbox {
 
 inline std::optional<std::string> get_input() {
     std::string input;
-    if (std::cin >> input) {
+    if (std::getline(std::cin, input)) {
         return input;
     }
     return std::nullopt;
@@ -15,7 +15,7 @@ inline std::optional<std::string> get_input() {
 
 inline bool wait_for_string(const std::string& string) {
     std::string input;
-    while (std::cin >> input) {
+    while (std::getline(std::cin, input)) {
         if (input == string) {
             return true;
         }
