@@ -221,6 +221,16 @@ public:
         return map_.find(k) != map_.end();
     }
 
+    Iterator find(const Key& key) {
+        auto it = map_.find(key);
+        return it == map_.end() ? list_.end() : it->second;
+    }
+
+    Iterator find(const Key& key) const {
+        auto it = map_.find(key);
+        return it == map_.end() ? list_.end() : it->second;
+    }
+
     std::pair<Key, Value>& front() {
         return list_.front();
     }
