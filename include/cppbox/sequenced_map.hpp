@@ -226,7 +226,7 @@ public:
         return it == map_.end() ? list_.end() : it->second;
     }
 
-    Iterator find(const Key& key) const {
+    ConstIterator find(const Key& key) const {
         auto it = map_.find(key);
         return it == map_.end() ? list_.end() : it->second;
     }
