@@ -10,6 +10,30 @@
 #include "cppbox/macro.hpp"
 #include "cppbox/parse.hpp"
 
+#define DEFINE_TO_STRING_FUNCTION_FOR_ENUM_IMPL_ADD_SWITCH_CASE_TO_STRING(Enum, x) \
+    case (Enum::x):                                                                \
+        return std::string(#x);
+/**
+ * @brief This macro creates a free `std::string to_string(const Enum)` function to convert an existing Enum class to a
+ * string. Prefer CREATE_SMART_ENUM for user-defined classes, but this macro is very useful when the Enum belongs to
+ * third-party library. Example usage:
+ * ```
+ * // In .hpp
+ * std::string to_string(const external_lib::Quality quality);
+ * // In .cpp
+ * DEFINE_TO_STRING_FUNCTION_FOR_ENUM(external_lib::Quality, GOOD, BAD, UGLY)
+ * ```
+ *
+ */
+#define DEFINE_TO_STRING_FUNCTION_FOR_ENUM(Enum, ...)                                                        \
+    std::string to_string(const Enum x) {                                                                    \
+        switch (x) {                                                                                         \
+            FOR_EACH_I(DEFINE_TO_STRING_FUNCTION_FOR_ENUM_IMPL_ADD_SWITCH_CASE_TO_STRING, Enum, __VA_ARGS__) \
+            default:                                                                                         \
+                throw_here("Failed to convert " #Enum " to string.");                                        \
+        }                                                                                                    \
+    }
+
 #define CREATE_SMART_ENUM_IMPL_ADD_SWITCH_CASE_TO_STRING(x) \
     case (x):                                               \
         return std::string(#x);
