@@ -7,7 +7,7 @@ Collection of general-purpose C++ functions, classes and utilities
 | **Dependency** | **Version** | **Description** |
 |----------------|-------------|-----------------|
 | CMake | >= 3.21 | CMake Build Tool |
-| [cmakebox](https://github.com/willat343/cmakebox) | >= 0.0.1 | CMake Functions and Utilities |
+| [cmakebox](https://github.com/willat343/cmakebox) | >= 0.0.9 | CMake Functions and Utilities |
 
 There are several ways to include `cppbox` within your project:
 - [Preferred] Via `FetchContent` allowing package to be built as a submodule.
@@ -17,7 +17,7 @@ There are several ways to include `cppbox` within your project:
 
 It is recommended to leverage the functionality of [cmakebox](https://github.com/willat343/cmakebox) by including the following lines in the `CMakeLists.txt` (replace `X.Y.Z` with version):
 ```CMake
-set(CMAKEBOX_VERSION "0.0.1")
+set(CMAKEBOX_VERSION "0.0.9")
 FetchContent_Declare(
     cmakebox
     GIT_REPOSITORY git@github.com:willat343/cmakebox.git
