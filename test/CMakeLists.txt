@@ -21,7 +21,9 @@ set_target_properties(${TESTS_NAME} PROPERTIES
 
 # Compile Options
 target_compile_options(${TESTS_NAME} PRIVATE
-    -Wall -Wextra -Wpedantic
+    -Wall
+    -Wextra
+    -Wpedantic
 )
 
 # Link Libraries
