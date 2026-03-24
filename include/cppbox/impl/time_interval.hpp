@@ -1,6 +1,7 @@
 #ifndef CPPBOX_IMPL_TIME_INTERVAL_HPP
 #define CPPBOX_IMPL_TIME_INTERVAL_HPP
 
+#include "cppbox/exceptions.hpp"
 #include "cppbox/time_interval.hpp"
 
 namespace cppbox {
