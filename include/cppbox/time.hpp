@@ -102,9 +102,22 @@ template<class Duration, typename Scalar = double>
 constexpr Duration to_duration(const Scalar seconds);
 
 /**
- * @brief Convert time (since clock epoch) or duration to scalar seconds.
+ * @brief Convert time (since clock epoch) or duration to scalar nanoseconds. Scalar times are assumed to be in seconds.
  *
- * @tparam Scalar default double allows use of function without specifying template parameters
+ * @tparam Scalar return type, default allows use of function without specifying template parameters. If unsigned, then
+ * an exception is thrown if the input is negative.
+ * @tparam TimeOrDuration type satisfying `std::is_arithemetic_v`, `is_time_point_or_duration_v`
+ * @param time_or_duration
+ * @return Scalar nanoseconds
+ */
+template<typename Scalar = std::int64_t, class TimeOrDuration = double>
+    requires(std::is_arithmetic_v<TimeOrDuration> || is_time_point_or_duration_v<TimeOrDuration>)
+constexpr Scalar to_nsec(const TimeOrDuration& time_or_duration);
+
+/**
+ * @brief Convert time (since clock epoch) or duration to scalar seconds. Scalar times are assumed to be in seconds.
+ *
+ * @tparam Scalar return type, default allows use of function without specifying template parameters
  * @tparam TimeOrDuration type satisfying `std::is_arithemetic_v`, `is_time_point_or_duration_v`
  * @param time_or_duration
  * @return Scalar

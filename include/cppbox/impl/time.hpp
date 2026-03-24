@@ -20,12 +20,40 @@ constexpr inline Duration to_duration(const Scalar seconds) {
 
 template<typename Scalar, class TimeOrDuration>
     requires(std::is_arithmetic_v<TimeOrDuration> || is_time_point_or_duration_v<TimeOrDuration>)
+constexpr Scalar to_nsec(const TimeOrDuration& time_or_duration) {
+    if constexpr (std::is_arithmetic_v<TimeOrDuration>) {
+        if constexpr (std::is_unsigned_v<Scalar>) {
+            throw_if(time_or_duration < static_cast<TimeOrDuration>(0),
+                    "Attempted to convert negative time or duration to unsigned type.");
+        }
+        return static_cast<Scalar>(time_or_duration);
+    } else if constexpr (is_time_point_v<TimeOrDuration>) {
+        return to_nsec<Scalar, typename TimeOrDuration::duration>(time_or_duration.time_since_epoch());
+    } else if constexpr (is_duration_v<TimeOrDuration>) {
+        if constexpr (std::is_unsigned_v<Scalar>) {
+            throw_if(time_or_duration < TimeOrDuration(0),
+                    "Attempted to convert negative time or duration to unsigned type.");
+        }
+        return std::chrono::duration<Scalar, std::nano>(time_or_duration).count();
+    }
+}
+
+template<typename Scalar, class TimeOrDuration>
+    requires(std::is_arithmetic_v<TimeOrDuration> || is_time_point_or_duration_v<TimeOrDuration>)
 constexpr inline Scalar to_sec(const TimeOrDuration& time_or_duration) {
     if constexpr (std::is_arithmetic_v<TimeOrDuration>) {
+        if constexpr (std::is_unsigned_v<Scalar>) {
+            throw_if(time_or_duration < static_cast<TimeOrDuration>(0),
+                    "Attempted to convert negative time or duration to unsigned type.");
+        }
         return static_cast<Scalar>(time_or_duration);
     } else if constexpr (is_time_point_v<TimeOrDuration>) {
         return to_sec<Scalar, typename TimeOrDuration::duration>(time_or_duration.time_since_epoch());
     } else if constexpr (is_duration_v<TimeOrDuration>) {
+        if constexpr (std::is_unsigned_v<Scalar>) {
+            throw_if(time_or_duration < TimeOrDuration(0),
+                    "Attempted to convert negative time or duration to unsigned type.");
+        }
         return std::chrono::duration<Scalar>(time_or_duration).count();
     }
 }
