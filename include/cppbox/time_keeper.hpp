@@ -1,6 +1,7 @@
 #ifndef CPPBOX_TIME_KEEPER_HPP
 #define CPPBOX_TIME_KEEPER_HPP
 
+#include <type_traits>
 #include <vector>
 
 #include "cppbox/time.hpp"
@@ -75,6 +76,9 @@ public:
     virtual Time time(const int index) const = 0;
 };
 
+template<typename T, typename Time = T::Time>
+concept IsTimeKeeper = std::is_base_of_v<TimeKeeperBase<Time>, T>;
+
 template<IsTimePoint Time_>
 class OrderedTimeKeeper : public TimeKeeperBase<Time_> {
 public:
@@ -83,18 +87,8 @@ public:
      *
      */
     using Base = TimeKeeperBase<Time_>;
-
-    /**
-     * @brief Time class
-     *
-     */
-    using Time = Base::Time;
-
-    /**
-     * @brief Duration class
-     *
-     */
-    using Duration = Base::Duration;
+    using typename Base::Duration;
+    using typename Base::Time;
 
     /**
      * @brief Get the end time as the last time.
@@ -171,18 +165,8 @@ public:
      *
      */
     using Base = TimeKeeperBase<Time_>;
-
-    /**
-     * @brief Time class
-     *
-     */
-    using Time = Base::Time;
-
-    /**
-     * @brief Duration class
-     *
-     */
-    using Duration = Base::Duration;
+    using typename Base::Duration;
+    using typename Base::Time;
 
     /**
      * @brief Construct a Uniform Time Keeper with start time 0 and interval of 1 second.
