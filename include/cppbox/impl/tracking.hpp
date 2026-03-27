@@ -32,6 +32,17 @@ inline auto Tracking<Element_, Time_>::at_time(const Time time) const -> Time {
 }
 
 template<typename Element_, IsTimePoint Time_>
+inline auto Tracking<Element_, Time_>::equal_since_time() const -> Time {
+    throw_if(tracking.empty(), "No tracking available.");
+    for (std::size_t i = tracking.size() - 1; i > 0; --i) {
+        if (tracking.element(i - 1) != tracking.element_back()) {
+            return tracking.time(i);
+        }
+    }
+    return tracking.time(0);
+}
+
+template<typename Element_, IsTimePoint Time_>
 inline bool Tracking<Element_, Time_>::has_tracking_at(const Time time) const {
     return !tracking.empty() && tracking.start_time() <= time;
 }
@@ -46,17 +57,6 @@ template<typename Element_, IsTimePoint Time_>
 inline auto Tracking<Element_, Time_>::last_time() const -> Time {
     throw_if(tracking.empty(), "No tracking available.");
     return tracking.end_time();
-}
-
-template<typename Element_, IsTimePoint Time_>
-inline auto Tracking<Element_, Time_>::equal_since_time() const -> Time {
-    throw_if(tracking.empty(), "No tracking available.");
-    for (std::size_t i = tracking.size() - 1; i > 0; --i) {
-        if (tracking.element(i - 1) != tracking.element_back()) {
-            return tracking.time(i);
-        }
-    }
-    return tracking.time(0);
 }
 
 template<typename Element_, IsTimePoint Time_>

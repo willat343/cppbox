@@ -67,6 +67,13 @@ public:
     Time at_time(const Time time) const;
 
     /**
+     * @brief Earliest time when tracking was equal to the last element (without the element changing)
+     *
+     * @return Time
+     */
+    Time equal_since_time() const;
+
+    /**
      * @brief Check if tracking information is available at a query time.
      *
      * @param time
@@ -88,13 +95,6 @@ public:
      * @return Time
      */
     Time last_time() const;
-
-    /**
-     * @brief Earliest time when tracking was equal to the last element (without the element changing)
-     *
-     * @return Time
-     */
-    Time equal_since_time() const;
 
     /**
      * @brief Update tracking information, which must be more recent than the last update.
