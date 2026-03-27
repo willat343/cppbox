@@ -15,6 +15,11 @@ inline Tracking<Element_, Time_>::Tracking(const Time update_time, const Element
 }
 
 template<typename Element_, IsTimePoint Time_>
+inline bool Tracking<Element_, Time_>::empty() const {
+    return tracking.size() == 0;
+}
+
+template<typename Element_, IsTimePoint Time_>
 inline auto Tracking<Element_, Time_>::at(const Time time) const -> const Element& {
     return tracking.element(get_index(time));
 }
@@ -87,24 +92,18 @@ template<typename Element_, IsTimePoint Time_>
 inline MultiTracking<Element_, Time_>::MultiTracking() : is_synchronised_(true) {}
 
 template<typename Element_, IsTimePoint Time_>
+inline bool MultiTracking<Element_, Time_>::empty() const {
+    return size() == 0;
+}
+
+template<typename Element_, IsTimePoint Time_>
+inline std::size_t MultiTracking<Element_, Time_>::size() const {
+    return trackings().size();
+}
+
+template<typename Element_, IsTimePoint Time_>
 inline bool MultiTracking<Element_, Time_>::has_tracking(const std::string& key) const {
     return trackings().contains(key);
-}
-
-template<typename Element_, IsTimePoint Time_>
-inline bool MultiTracking<Element_, Time_>::is_synchronised() const {
-    return is_synchronised_;
-}
-
-template<typename Element_, IsTimePoint Time_>
-inline bool MultiTracking<Element_, Time_>::is_synchronised_to(const Time time) const {
-    return is_synchronised() && !trackings().empty() && trackings().cbegin()->second.last_time() == time;
-}
-
-template<typename Element_, IsTimePoint Time_>
-inline auto MultiTracking<Element_, Time_>::synchronisation_time() const -> Time {
-    throw_if(!is_synchronised() || trackings().empty(), "Synchronisation time does not exist.");
-    return trackings().cbegin()->second.last_time();
 }
 
 template<typename Element_, IsTimePoint Time_>
@@ -131,6 +130,22 @@ template<typename Element_, IsTimePoint Time_>
 void MultiTracking<Element_, Time_>::update(const Time update_time, const std::string& key, const Element& element) {
     create_or_update(update_time, key, element);
     is_synchronised_ = trackings().size() == 1 || check_if_synchronised_to(update_time);
+}
+
+template<typename Element_, IsTimePoint Time_>
+inline bool MultiTracking<Element_, Time_>::is_synchronised() const {
+    return is_synchronised_;
+}
+
+template<typename Element_, IsTimePoint Time_>
+inline bool MultiTracking<Element_, Time_>::is_synchronised_to(const Time time) const {
+    return is_synchronised() && !trackings().empty() && trackings().cbegin()->second.last_time() == time;
+}
+
+template<typename Element_, IsTimePoint Time_>
+inline auto MultiTracking<Element_, Time_>::synchronisation_time() const -> Time {
+    throw_if(!is_synchronised() || trackings().empty(), "Synchronisation time does not exist.");
+    return trackings().cbegin()->second.last_time();
 }
 
 template<typename Element_, IsTimePoint Time_>

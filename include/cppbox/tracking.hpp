@@ -24,18 +24,26 @@ public:
     using Time = Time_;
 
     /**
-     * @brief Initialise tracking
+     * @brief Initialise tracking.
      *
      */
     explicit Tracking() = default;
 
     /**
-     * @brief Initialise tracking
+     * @brief Initialise tracking (with first update).
      *
      * @param update_time
      * @param element
      */
     explicit Tracking(const Time update_time, const Element& element);
+
+    /**
+     * @brief Check if any updates received.
+     *
+     * @return true
+     * @return false
+     */
+    bool empty() const;
 
     /**
      * @brief Element at or before a query time.
@@ -132,6 +140,21 @@ public:
     explicit MultiTracking();
 
     /**
+     * @brief Check if any tracking exists, equivalent to `size() == 0`.
+     *
+     * @return true
+     * @return false
+     */
+    bool empty() const;
+
+    /**
+     * @brief Get number of trackings.
+     *
+     * @return std::size_
+     */
+    std::size_t size() const;
+
+    /**
      * @brief Check if tracking exists.
      *
      * @param key
@@ -139,32 +162,6 @@ public:
      * @return false
      */
     bool has_tracking(const std::string& key) const;
-
-    /**
-     * @brief Check if all trackings are updated to the same time, i.e. they share the same last update time.
-     *
-     * @return true if trackings are synchronised or if there are no trackings
-     * @return false otherwise
-     */
-    bool is_synchronised() const;
-
-    /**
-     * @brief Check if all trackings are updated to `time`, i.e. they all share `time` as the same last update time.
-     *
-     * @param time
-     * @return true if trackings are synchronised to `time`
-     * @return false otherwise or if there are no trackings
-     */
-    bool is_synchronised_to(const Time time) const;
-
-    /**
-     * @brief Get the time to which all trackings are updated.
-     *
-     * Throws an exception if not synchronised or there are no trackings.
-     *
-     * @return Time
-     */
-    Time synchronisation_time() const;
 
     /**
      * @brief Get trackings.
@@ -200,6 +197,32 @@ public:
      * @param element
      */
     void update(const Time update_time, const std::string& key, const Element& element);
+
+    /**
+     * @brief Check if all trackings are updated to the same time, i.e. they share the same last update time.
+     *
+     * @return true if trackings are synchronised or if there are no trackings
+     * @return false otherwise
+     */
+    bool is_synchronised() const;
+
+    /**
+     * @brief Check if all trackings are updated to `time`, i.e. they all share `time` as the same last update time.
+     *
+     * @param time
+     * @return true if trackings are synchronised to `time`
+     * @return false otherwise or if there are no trackings
+     */
+    bool is_synchronised_to(const Time time) const;
+
+    /**
+     * @brief Get the time to which all trackings are updated.
+     *
+     * Throws an exception if not synchronised or there are no trackings.
+     *
+     * @return Time
+     */
+    Time synchronisation_time() const;
 
 private:
     /**
