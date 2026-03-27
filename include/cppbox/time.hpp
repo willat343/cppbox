@@ -107,7 +107,7 @@ constexpr Duration to_duration(const Scalar seconds);
  * @tparam Scalar return type, default allows use of function without specifying template parameters. If unsigned, then
  * an exception is thrown if the input is negative.
  * @tparam TimeOrDuration type satisfying `std::is_arithemetic_v`, `is_time_point_or_duration_v`
- * @param time_or_duration
+ * @param time_or_duration time or duration (if arithmetic, assumed to be nanoseconds)
  * @return Scalar nanoseconds
  */
 template<typename Scalar = std::int64_t, class TimeOrDuration = double>
@@ -119,7 +119,7 @@ constexpr Scalar to_nsec(const TimeOrDuration& time_or_duration);
  *
  * @tparam Scalar return type, default allows use of function without specifying template parameters
  * @tparam TimeOrDuration type satisfying `std::is_arithemetic_v`, `is_time_point_or_duration_v`
- * @param time_or_duration
+ * @param time_or_duration time or duration (if arithmetic, assumed to be seconds)
  * @return Scalar
  */
 template<typename Scalar = double, class TimeOrDuration = Scalar>
