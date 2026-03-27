@@ -3,18 +3,14 @@
 
 #include <utility>
 
+#include "cppbox/exceptions.hpp"
 #include "cppbox/temporal_vector.hpp"
 
 namespace cppbox {
 
 template<typename Element_, IsTimeKeeper TimeKeeper_>
-inline auto TemporalVectorBase<Element_, TimeKeeper_>::elements() const -> const std::vector<Element>& {
-    return elements_;
-}
-
-template<typename Element_, IsTimeKeeper TimeKeeper_>
-inline auto TemporalVectorBase<Element_, TimeKeeper_>::elements() -> std::vector<Element>& {
-    return const_cast<std::vector<Element>&>(std::as_const(*this).elements());
+inline void TemporalVectorBase<Element_, TimeKeeper_>::change_start_time(const Time time_) {
+    time_keeper_.change_start_time(time_);
 }
 
 template<typename Element_, IsTimeKeeper TimeKeeper_>
@@ -35,6 +31,16 @@ inline auto TemporalVectorBase<Element_, TimeKeeper_>::element_front() const -> 
 template<typename Element_, IsTimeKeeper TimeKeeper_>
 inline auto TemporalVectorBase<Element_, TimeKeeper_>::element_front() -> Element& {
     return const_cast<Element&>(std::as_const(*this).element_front());
+}
+
+template<typename Element_, IsTimeKeeper TimeKeeper_>
+inline auto TemporalVectorBase<Element_, TimeKeeper_>::elements() const -> const std::deque<Element>& {
+    return elements_;
+}
+
+template<typename Element_, IsTimeKeeper TimeKeeper_>
+inline auto TemporalVectorBase<Element_, TimeKeeper_>::elements() -> std::deque<Element>& {
+    return const_cast<std::deque<Element>&>(std::as_const(*this).elements());
 }
 
 template<typename Element_, IsTimeKeeper TimeKeeper_>
@@ -107,9 +113,19 @@ template<typename Element_, typename Time_>
 inline OrderedTemporalVector<Element_, Time_>::OrderedTemporalVector() : Base(TimeKeeper()) {}
 
 template<typename Element_, typename Time_>
+void OrderedTemporalVector<Element_, Time_>::change_end_time(const Time time_) {
+    this->time_keeper_.change_end_time(time_);
+}
+
+template<typename Element_, typename Time_>
+void OrderedTemporalVector<Element_, Time_>::change_time(const int index, const Time time_) {
+    this->time_keeper_.change_time(index, time_);
+}
+
+template<typename Element_, typename Time_>
 template<class... Args>
-inline void OrderedTemporalVector<Element_, Time_>::emplace_back(const Time time, Args&&... args) {
-    this->time_keeper_.push_back(time);
+inline void OrderedTemporalVector<Element_, Time_>::emplace_back(const Time time_, Args&&... args) {
+    this->time_keeper_.push_back(time_);
     Base::template emplace_back(std::forward<Args>(args)...);
 }
 

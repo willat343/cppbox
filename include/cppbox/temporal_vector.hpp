@@ -1,8 +1,8 @@
 #ifndef CPPBOX_TEMPORAL_VECTOR_HPP
 #define CPPBOX_TEMPORAL_VECTOR_HPP
 
+#include <deque>
 #include <type_traits>
-#include <vector>
 
 #include "cppbox/time.hpp"
 #include "cppbox/time_keeper.hpp"
@@ -37,6 +37,14 @@ public:
     using Duration = TimeKeeper::Duration;
 
     /**
+     * @brief Change the start time. Throws an exception if change is invalid.
+     *
+     * @param index
+     * @param time_
+     */
+    void change_start_time(const Time time_);
+
+    /**
      * @brief Get immutable last element
      *
      * @return const Element&
@@ -67,16 +75,16 @@ public:
     /**
      * @brief Get immutable vector of elements.
      *
-     * @return const std::vector<Element>&
+     * @return const std::deque<Element>&
      */
-    const std::vector<Element>& elements() const;
+    const std::deque<Element>& elements() const;
 
     /**
      * @brief Get mutable elements.
      *
-     * @return std::vector<Element>&
+     * @return std::deque<Element>&
      */
-    std::vector<Element>& elements();
+    std::deque<Element>& elements();
 
     /**
      * @brief Get immutable element at a specific index.
@@ -138,7 +146,7 @@ public:
     const TimeKeeper& time_keeper() const;
 
     /**
-     * @brief Get a copy of the times.
+     * @brief Get a copy of the times as vector.
      *
      * @return std::vector<Time>
      */
@@ -172,8 +180,11 @@ protected:
     /**
      * @brief Stored elements.
      *
+     * Note: One reason not to use std::vector<Element> is that it is specialised for `bool` and does not return true
+     * references.
+     *
      */
-    std::vector<Element> elements_;
+    std::deque<Element> elements_;
 
     /**
      * @brief Time keeper.
@@ -202,14 +213,29 @@ public:
     explicit OrderedTemporalVector();
 
     /**
+     * @brief Change the end time. Throws an exception if change is invalid.
+     *
+     * @param time_
+     */
+    void change_end_time(const Time time_);
+
+    /**
+     * @brief Change the time at a specific index. Throws an exception if change is invalid.
+     *
+     * @param index
+     * @param time_
+     */
+    void change_time(const int index, const Time time_);
+
+    /**
      * @brief Add a time-element pair to storage.
      *
      * @tparam Args
-     * @param time
+     * @param time_
      * @param args
      */
     template<class... Args>
-    void emplace_back(const Time time, Args&&... args);
+    void emplace_back(const Time time_, Args&&... args);
 };
 
 template<typename Element_, typename Time_>

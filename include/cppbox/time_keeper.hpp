@@ -24,6 +24,21 @@ public:
     using Duration = Time::duration;
 
     /**
+     * @brief Change the start time.
+     *
+     * @param time_
+     */
+    virtual void change_start_time(const Time time_) = 0;
+
+    /**
+     * @brief Check if there are any times (i.e., equivalent to `size() == 0`).
+     *
+     * @return true
+     * @return false
+     */
+    bool empty() const;
+
+    /**
      * @brief Get the end time.
      *
      * @return Time
@@ -89,6 +104,29 @@ public:
     using Base = TimeKeeperBase<Time_>;
     using typename Base::Duration;
     using typename Base::Time;
+
+    /**
+     * @brief Change the end time. Throws an exception if monotonicity would be violated.
+     *
+     * @param time_
+     */
+    void change_end_time(const Time time_);
+
+    /**
+     * @brief Change the start time. Throws an exception if monotonicity would be violated.
+     *
+     * @param time_
+     */
+    void change_start_time(const Time time_) override;
+
+    /**
+     * @brief Change the time at a specific index. Throws an exception if index is invalid or monotonicity would be
+     * violated.
+     *
+     * @param index
+     * @param time_
+     */
+    void change_time(const int index, const Time time_);
 
     /**
      * @brief Get the end time as the last time.
@@ -181,6 +219,13 @@ public:
      * @param interval_
      */
     explicit UniformTimeKeeper(const Time start_, const Duration interval_);
+
+    /**
+     * @brief Set the stored start time.
+     *
+     * @param time_
+     */
+    void change_start_time(const Time time_) override;
 
     /**
      * @brief Get the end time as the max of `Time`, which may not be an integer number of intervals from start.
