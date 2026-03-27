@@ -110,7 +110,7 @@ public:
      *
      * @param time_
      */
-    void change_end_time(const Time time_);
+    virtual void change_end_time(const Time time_);
 
     /**
      * @brief Change the start time. Throws an exception if monotonicity would be violated.
@@ -126,7 +126,7 @@ public:
      * @param index
      * @param time_
      */
-    void change_time(const int index, const Time time_);
+    virtual void change_time(const int index, const Time time_);
 
     /**
      * @brief Get the end time as the last time.
@@ -150,7 +150,7 @@ public:
      *
      * @param time_
      */
-    void push_back(const Time time_);
+    virtual void push_back(const Time time_);
 
     /**
      * @brief Reset the time keeper, clearing any stored data.
@@ -287,7 +287,7 @@ public:
      * @param index index
      * @return Time time
      */
-    Time time(const int index) const;
+    Time time(const int index) const override;
 
 private:
     /**
