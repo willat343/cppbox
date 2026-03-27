@@ -3,6 +3,7 @@ set(TESTS_NAME ${PROJECT_NAME}_tests)
 # Build Example
 add_executable(${TESTS_NAME}
     src/map.cpp
+    src/tracking.cpp
     src/traits.cpp
     src/unordered_map.cpp
     src/unordered_set.cpp
