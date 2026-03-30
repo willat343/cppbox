@@ -24,6 +24,13 @@ public:
     using Duration = Time::duration;
 
     /**
+     * @brief Get the last time.
+     *
+     * @return Time
+     */
+    virtual Time back() const = 0;
+
+    /**
      * @brief Change the start time.
      *
      * @param time_
@@ -39,11 +46,11 @@ public:
     bool empty() const;
 
     /**
-     * @brief Get the end time.
+     * @brief Get the end time, which in the base implementation returns the last time (`back()`).
      *
      * @return Time
      */
-    virtual Time end() const = 0;
+    virtual Time end() const;
 
     /**
      * @brief Find the index for a given time, equal to i if the time at index i <= `time_`, or a negative integer if
@@ -53,6 +60,13 @@ public:
      * @return int index
      */
     virtual int find_index(const Time time_) const = 0;
+
+    /**
+     * @brief Get the first time.
+     *
+     * @return Time
+     */
+    virtual Time front() const = 0;
 
     /**
      * @brief Returns the time interval between the time at index i and the time at index i + 1
@@ -69,11 +83,11 @@ public:
     virtual void reset() = 0;
 
     /**
-     * @brief Get the start time.
+     * @brief Get the start time, which in the base implementation returns the first time (`front()`).
      *
      * @return Time
      */
-    virtual Time start() const = 0;
+    virtual Time start() const;
 
     /**
      * @brief Get the number of times
@@ -104,6 +118,13 @@ public:
     using Base = TimeKeeperBase<Time_>;
     using typename Base::Duration;
     using typename Base::Time;
+
+    /**
+     * @brief Get the last time.
+     *
+     * @return Time
+     */
+    Time back() const override;
 
     /**
      * @brief Change the end time. Throws an exception if monotonicity would be violated.
@@ -144,6 +165,13 @@ public:
      * @return int
      */
     int find_index(const Time time_) const override;
+
+    /**
+     * @brief Get the first time.
+     *
+     * @return Time
+     */
+    Time front() const override;
 
     /**
      * @brief Add a time to the end of the stored times.
@@ -215,10 +243,17 @@ public:
     /**
      * @brief Construct a new Uniform Time Keeper.
      *
-     * @param start_
+     * @param first_
      * @param interval_
      */
-    explicit UniformTimeKeeper(const Time start_, const Duration interval_);
+    explicit UniformTimeKeeper(const Time first_, const Duration interval_);
+
+    /**
+     * @brief Get the last time.
+     *
+     * @return Time
+     */
+    Time back() const override;
 
     /**
      * @brief Set the stored start time.
@@ -247,6 +282,13 @@ public:
     int find_index(const Time time_) const override;
 
     /**
+     * @brief Get the first time as the stored time.
+     *
+     * @return Time
+     */
+    Time front() const override;
+
+    /**
      * @brief Get the interval between times.
      *
      * @return Duration
@@ -267,13 +309,6 @@ public:
     void reset() override;
 
     /**
-     * @brief Get the start time as the stored start time.
-     *
-     * @return Time
-     */
-    Time start() const override;
-
-    /**
      * @brief Get the number of times. The result is always std::numeric_limits<int>::max() avoiding
      * computations that may have integer overflow. Note that `time(size() - 1)` may not be well defined.
      *
@@ -291,10 +326,10 @@ public:
 
 private:
     /**
-     * @brief Start time.
+     * @brief First time.
      *
      */
-    Time start_;
+    Time first_;
 
     /**
      * @brief Interval between times.
