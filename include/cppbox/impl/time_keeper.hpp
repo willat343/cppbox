@@ -88,7 +88,7 @@ inline void OrderedTimeKeeper<Time_>::push_back(const Time time_) {
 
 template<IsTimePoint Time_>
 inline void OrderedTimeKeeper<Time_>::require_time(const Time time_) {
-    if (!has_time(time_)) {
+    if (!this->has_time(time_)) {
         throw_if(time_ < end(), "Required time " + cppbox::to_string(time_) +
                                         " could not be added because it precedes end() == " + cppbox::to_string(end()) +
                                         ".");
@@ -98,7 +98,7 @@ inline void OrderedTimeKeeper<Time_>::require_time(const Time time_) {
 
 template<IsTimePoint Time_>
 inline void OrderedTimeKeeper<Time_>::require_time_within(const Time time_) {
-    if (!has_time_within(time_)) {
+    if (!this->has_time_within(time_)) {
         throw_if(time_ < end(), "Required time " + cppbox::to_string(time_) +
                                         " could not be added because it precedes end() == " + cppbox::to_string(end()) +
                                         ".");
@@ -168,12 +168,12 @@ inline auto UniformTimeKeeper<Time_>::interval() const -> Duration {
 
 template<IsTimePoint Time_>
 inline void UniformTimeKeeper<Time_>::require_time(const Time time_) {
-    throw_if(!has_time(time_), "Required time " + cppbox::to_string(time_) + " does not exist.");
+    throw_if(!this->has_time(time_), "Required time " + cppbox::to_string(time_) + " does not exist.");
 }
 
 template<IsTimePoint Time_>
 inline void UniformTimeKeeper<Time_>::require_time_within(const Time time_) {
-    throw_if(!has_time_within(time_),
+    throw_if(!this->has_time_within(time_),
             "Required time " + cppbox::to_string(time_) + " does not exist not is between two times.");
 }
 
