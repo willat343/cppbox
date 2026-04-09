@@ -55,12 +55,50 @@ public:
     virtual int find_index(const Time time_) const = 0;
 
     /**
+     * @brief Check if `time_` exists (exactly).
+     *
+     * See also `bool has_time_within(const Time) const` and `void require_time(const Time)`.
+     *
+     * @param time_
+     * @return true
+     * @return false
+     */
+    virtual bool has_time(const Time time_) const;
+
+    /**
+     * @brief Check if `time_` exists or is between two times.
+     *
+     * @param time_
+     * @return true
+     * @return false
+     */
+    virtual bool has_time_within(const Time time_) const;
+
+    /**
      * @brief Returns the time interval between the time at index i and the time at index i + 1
      *
      * @param index first index of the interval
      * @return Duration
      */
     virtual Duration interval(const int index) const;
+
+    /**
+     * @brief Ensure that `time_` exists (exactly). If the `time_` does not exist, add it if possible and otherwise
+     * throw an exception.
+     *
+     * See also `bool has_time(const Time) const`.
+     *
+     * @param time_
+     */
+    virtual void require_time(const Time time_) = 0;
+
+    /**
+     * @brief Ensure that `time_` exists  or is between two times. If the `time_` does not exist, add it if possible and
+     * otherwise throw an exception.
+     *
+     * @param time_
+     */
+    virtual void require_time_within(const Time time_) = 0;
 
     /**
      * @brief Reset the time keeper.
@@ -151,6 +189,22 @@ public:
      * @param time_
      */
     virtual void push_back(const Time time_);
+
+    /**
+     * @brief Check if `time_` exists. If it doesn't and `time_` is >= `end()`, then add it. Otherwise, throw an
+     * exception.
+     *
+     * @param time_
+     */
+    void require_time(const Time time_) override;
+
+    /**
+     * @brief Check if `time_` exists or is between two times. If it doesn't and `time_` is >= `end()`, then add it.
+     * Otherwise, throw an exception.
+     *
+     * @param time_
+     */
+    void require_time_within(const Time time_) override;
 
     /**
      * @brief Reset the time keeper, clearing any stored data.
@@ -245,6 +299,20 @@ public:
      * @return int
      */
     int find_index(const Time time_) const override;
+
+    /**
+     * @brief Check if `time_` exists. Otherwise, throw an exception.
+     *
+     * @param time_
+     */
+    void require_time(const Time time_) override;
+
+    /**
+     * @brief Check if `time_` exists or is between two times. Otherwise, throw an exception.
+     *
+     * @param time_
+     */
+    void require_time_within(const Time time_) override;
 
     /**
      * @brief Get the start time as the stored time.
