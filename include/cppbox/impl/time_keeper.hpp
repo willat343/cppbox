@@ -178,6 +178,11 @@ inline auto UniformTimeKeeper<Time_>::interval() const -> Duration {
 }
 
 template<IsTimePoint Time_>
+inline void UniformTimeKeeper<Time_>::push_back(const Time) {
+    throw_here("Times cannot be added to a uniform time keeper. Prefer `require_time(time_)` instead.");
+}
+
+template<IsTimePoint Time_>
 inline void UniformTimeKeeper<Time_>::require_time(const Time time_) {
     throw_if(!this->has_time(time_), "Required time " + cppbox::to_string(time_) + " does not exist.");
 }

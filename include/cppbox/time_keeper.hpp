@@ -97,6 +97,15 @@ public:
     virtual Duration interval_front() const;
 
     /**
+     * @brief Add `time_` if possible and otherwise throw an exception.
+     *
+     * See also `void require_time(const Time)` which is usually preferred unless adding duplicate times.
+     *
+     * @param time_
+     */
+    virtual void push_back(const Time time_) = 0;
+
+    /**
      * @brief Ensure that `time_` exists (exactly). If the `time_` does not exist, add it if possible and otherwise
      * throw an exception.
      *
@@ -202,7 +211,7 @@ public:
      *
      * @param time_
      */
-    virtual void push_back(const Time time_);
+    void push_back(const Time time_) override;
 
     /**
      * @brief Check if `time_` exists. If it doesn't and `time_` is >= `end()`, then add it. Otherwise, throw an
@@ -341,6 +350,12 @@ public:
      * @return Duration
      */
     Duration interval() const;
+
+    /**
+     * @brief Times cannot be added to a uniform time keeper, so throw an exception.
+     *
+     */
+    void push_back(const Time) override;
 
     /**
      * @brief Reset the time keeper, clearing any stored data (no-op for UniformTimeKeeper).
