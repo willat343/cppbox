@@ -83,6 +83,20 @@ public:
     virtual Duration interval(const int index) const;
 
     /**
+     * @brief Returns the last time interval.
+     *
+     * @return Duration
+     */
+    virtual Duration interval_back() const;
+
+    /**
+     * @brief Returns the first time interval.
+     *
+     * @return Duration
+     */
+    virtual Duration interval_front() const;
+
+    /**
      * @brief Ensure that `time_` exists (exactly). If the `time_` does not exist, add it if possible and otherwise
      * throw an exception.
      *

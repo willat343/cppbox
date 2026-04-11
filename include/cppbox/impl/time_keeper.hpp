@@ -35,6 +35,16 @@ inline auto TimeKeeperBase<Time_>::interval(const int index) const -> Duration {
 }
 
 template<IsTimePoint Time_>
+inline auto TimeKeeperBase<Time_>::interval_back() const -> Duration {
+    return interval(size() - 2);
+}
+
+template<IsTimePoint Time_>
+inline auto TimeKeeperBase<Time_>::interval_front() const -> Duration {
+    return interval(0);
+}
+
+template<IsTimePoint Time_>
 inline void OrderedTimeKeeper<Time_>::change_end_time(const Time time_) {
     throw_if(this->empty(), "End time cannot be changed as there are no times.");
     throw_if(size() >= 2 && time_ < time(size() - 2),
