@@ -20,13 +20,14 @@ inline bool TimeKeeperBase<Time_>::empty() const {
 
 template<IsTimePoint Time_>
 inline bool TimeKeeperBase<Time_>::has_time(const Time time_) const {
-    return time(find_index(time_)) == time_;
+    const int index = find_index(time_);
+    return index >= 0 && time(index) == time_;
 }
 
 template<IsTimePoint Time_>
 inline bool TimeKeeperBase<Time_>::has_time_within(const Time time_) const {
     const int index = find_index(time_);
-    return time(index) == time_ || index + 1 < size();
+    return index >= 0 && (time(index) == time_ || index + 1 < size());
 }
 
 template<IsTimePoint Time_>

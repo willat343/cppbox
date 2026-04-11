@@ -329,13 +329,6 @@ public:
     void require_time_within(const Time time_) override;
 
     /**
-     * @brief Get the start time as the stored time.
-     *
-     * @return Time
-     */
-    Time start() const override;
-
-    /**
      * @brief Get the interval between times.
      *
      * @return Duration
@@ -362,6 +355,13 @@ public:
      * @return int
      */
     int size() const override;
+
+    /**
+     * @brief Get the start time as the stored time.
+     *
+     * @return Time
+     */
+    Time start() const override;
 
     /**
      * @brief Get the time at index `i`.
