@@ -55,6 +55,28 @@ public:
     virtual int find_index(const Time time_) const = 0;
 
     /**
+     * @brief Find the index for a given time, equivalent to `int find_index(const Time)`.
+     *
+     * The purpose of this function is to provide a hint that searching from the end may be more efficient, however
+     * derived classes may ignore this hint. The default implementation is an alias for `int find_index(const Time)`.
+     *
+     * @param time_
+     * @return int
+     */
+    virtual int find_index_from_end(const Time time_) const;
+
+    /**
+     * @brief Find the index for a given time, equivalent to `int find_index(const Time)`.
+     *
+     * The purpose of this function is to provide a hint that searching from the start may be more efficient, however
+     * derived classes may ignore this hint. The default implementation is an alias for `int find_index(const Time)`.
+     *
+     * @param time_
+     * @return int
+     */
+    virtual int find_index_from_start(const Time time_) const;
+
+    /**
      * @brief Check if `time_` exists (exactly).
      *
      * See also `bool has_time_within(const Time) const` and `void require_time(const Time)`.
@@ -197,7 +219,7 @@ public:
     Time end() const override;
 
     /**
-     * @brief Returns as the index as described by `TimeKeeperBase`, returning -1 if `time_` precedes `start()`.
+     * @brief Returns the index as described by `TimeKeeperBase`, returning -1 if `time_` precedes `start()`.
      *
      * This has logarithmic complexity in the length of the stored times.
      *
@@ -205,6 +227,30 @@ public:
      * @return int
      */
     int find_index(const Time time_) const override;
+
+    /**
+     * @brief Returns the same index as `int find_index(const Time)`, however searches linearly from the last stored
+     * time.
+     *
+     * This has linear complexity in the length of the stored times, however may be faster than `int find_index(const
+     * Time)` when it is known that `time_` is near the end of the stored times.
+     *
+     * @param time_
+     * @return int
+     */
+    int find_index_from_end(const Time time_) const override;
+
+    /**
+     * @brief Returns the same index as `int find_index(const Time)`, however searches linearly from the first stored
+     * time.
+     *
+     * This has linear complexity in the length of the stored times, however may be faster than `int find_index(const
+     * Time)` when it is known that `time_` is near the start of the stored times.
+     *
+     * @param time_
+     * @return int
+     */
+    int find_index_from_start(const Time time_) const override;
 
     /**
      * @brief Add a time to the end of the stored times.

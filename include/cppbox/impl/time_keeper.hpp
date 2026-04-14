@@ -19,6 +19,16 @@ inline bool TimeKeeperBase<Time_>::empty() const {
 }
 
 template<IsTimePoint Time_>
+inline int TimeKeeperBase<Time_>::find_index_from_end(const Time time_) const {
+    return find_index(time_);
+}
+
+template<IsTimePoint Time_>
+inline int TimeKeeperBase<Time_>::find_index_from_start(const Time time_) const {
+    return find_index(time_);
+}
+
+template<IsTimePoint Time_>
 inline bool TimeKeeperBase<Time_>::has_time(const Time time_) const {
     const int index = find_index(time_);
     return index >= 0 && time(index) == time_;
@@ -85,10 +95,32 @@ inline auto OrderedTimeKeeper<Time_>::end() const -> Time {
 
 template<IsTimePoint Time_>
 inline int OrderedTimeKeeper<Time_>::find_index(const Time time_) const {
-    // std::lower_bound is logarithmic complexity, returning the first iterator that breaks the comparison.
-    const auto lower = std::lower_bound(times().cbegin(), times().cend(), time_, std::less_equal<Time>());
+    // std::upper_bound is logarithmic complexity.
+    const auto upper = std::upper_bound(times().cbegin(), times().cend(), time_);
     // std::distance is constant complexity for LegacyRandomAccessIterator.
-    return std::distance(times().cbegin(), lower) - 1;
+    return std::distance(times().cbegin(), upper) - 1;
+}
+
+template<IsTimePoint Time_>
+inline int OrderedTimeKeeper<Time_>::find_index_from_end(const Time time_) const {
+    int index = size() - 1;
+    for (auto it = times().crbegin(); it != times().crend(); ++it, --index) {
+        if (time_ >= *it) {
+            return index;
+        }
+    }
+    return index;
+}
+
+template<IsTimePoint Time_>
+inline int OrderedTimeKeeper<Time_>::find_index_from_start(const Time time_) const {
+    int index = 0;
+    for (auto it = times().cbegin(); it != times().cend(); ++it, ++index) {
+        if (*it > time_) {
+            return index - 1;
+        }
+    }
+    return index - 1;
 }
 
 template<IsTimePoint Time_>
