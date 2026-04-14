@@ -69,10 +69,19 @@ public:
      *
      * If the Element is also needed, use the `const Element& at(const Time, Time&) const` overload.
      *
-     * @param time
-     * @return Time
+     * @param time query time
+     * @return Time the time of the update
      */
     Time at_time(const Time time) const;
+
+    /**
+     * @brief Check if the element changed at the last update (including if the last update was the first).
+     *
+     * @param time
+     * @return true if element changed at last update (including first element)
+     * @return false otherwise
+     */
+    bool changed_last() const;
 
     /**
      * @brief Earliest time when tracking was equal to the last element (without the element changing)
@@ -80,6 +89,30 @@ public:
      * @return Time
      */
     Time equal_since_time() const;
+
+    /**
+     * @brief Get the first update element.
+     *
+     * If the update time is also needed, use the `const Element& first(Time&) const` overload.
+     *
+     * @return const Element&
+     */
+    const Element& first() const;
+
+    /**
+     * @brief Get the first update element.
+     *
+     * @param update_time the time of the update
+     * @return const Element&
+     */
+    const Element& first(Time& update_time) const;
+
+    /**
+     * @brief Get the first update time.
+     *
+     * @return Time
+     */
+    Time first_time() const;
 
     /**
      * @brief Check if tracking information is available at a query time.
@@ -91,18 +124,74 @@ public:
     bool has_tracking_at(const Time time) const;
 
     /**
-     * @brief Last element when tracking was updated
+     * @brief Check if tracking information has only been updated once.
+     *
+     * @return true
+     * @return false
+     */
+    bool is_updated_once() const;
+
+    /**
+     * @brief Last element when tracking was updated.
      *
      * @return const Element&
      */
     const Element& last() const;
 
     /**
-     * @brief Last time when tracking was updated
+     * @brief Last time when tracking was updated.
      *
      * @return Time
      */
     Time last_time() const;
+
+    /**
+     * @brief Last element when tracking was updated or `default_value` if tracking is empty.
+     *
+     * @param default_value
+     * @return Element
+     */
+    Element last_or(const Element& default_value) const;
+
+    /**
+     * @brief Element after a query time, i.e. the element after the result of `const Element& at(const Time)`.
+     *
+     * @param time query time
+     * @return const Element&
+     */
+    const Element& next(const Time time) const;
+
+    /**
+     * @brief Element after a query time, i.e. the element after the result of `const Element& at(const Time, Time&)`.
+     *
+     * @param time query time
+     * @param update_time the time of the update
+     * @return const Element&
+     */
+    const Element& next(const Time time, Time& update_time) const;
+
+    /**
+     * @brief Get the update time after a query time, i.e. the update time after the result of `Time at_time(const
+     * Time)`.
+     *
+     * @param time query time
+     * @return Time the time of the next update
+     */
+    Time next_time(const Time time) const;
+
+    /**
+     * @brief Element before the element of the last update.
+     *
+     * @return const Element&
+     */
+    const Element& previous() const;
+
+    /**
+     * @brief Time before the time of the last update.
+     *
+     * @return Time
+     */
+    Time previous_time() const;
 
     /**
      * @brief Update tracking information, which must be more recent than the last update.
@@ -125,7 +214,7 @@ private:
      * @brief Elements are stored as an ordered temporal vector.
      *
      */
-    OrderedTemporalVector<Element, Time> tracking;
+    OrderedTemporalVector<Element, Time> tracking_;
 };
 
 template<typename Time>
@@ -199,6 +288,14 @@ public:
     void update(const Time update_time, const std::string& key, const Element& element);
 
     /**
+     * @brief Update all existing trackings with the same element.
+     *
+     * @param update_time
+     * @param element
+     */
+    void update(const Time update_time, const Element& element);
+
+    /**
      * @brief Check if all trackings are updated to the same time, i.e. they share the same last update time.
      *
      * @return true if trackings are synchronised or if there are no trackings
@@ -214,6 +311,15 @@ public:
      * @return false otherwise or if there are no trackings
      */
     bool is_synchronised_to(const Time time) const;
+
+    /**
+     * @brief Get the last tracking updates at `synchronisation_time()`.
+     *
+     * Throws an exception if not synchronised or there are no trackings.
+     *
+     * @return std::unordered_map<std::string, Element>
+     */
+    std::unordered_map<std::string, Element> last_synchronised() const;
 
     /**
      * @brief Get the time to which all trackings are updated.

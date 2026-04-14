@@ -16,74 +16,137 @@ inline Tracking<Element_, Time_>::Tracking(const Time update_time, const Element
 
 template<typename Element_, IsTimePoint Time_>
 inline bool Tracking<Element_, Time_>::empty() const {
-    return tracking.size() == 0;
+    return tracking_.size() == 0;
 }
 
 template<typename Element_, IsTimePoint Time_>
 inline auto Tracking<Element_, Time_>::at(const Time time) const -> const Element& {
-    return tracking.element(get_index(time));
+    return tracking_.element(get_index(time));
 }
 
 template<typename Element_, IsTimePoint Time_>
 inline auto Tracking<Element_, Time_>::at(const Time time, Time& update_time) const -> const Element& {
     const int index = get_index(time);
-    update_time = tracking.time(index);
-    return tracking.element(index);
+    update_time = tracking_.time(index);
+    return tracking_.element(index);
 }
 
 template<typename Element_, IsTimePoint Time_>
 inline auto Tracking<Element_, Time_>::at_time(const Time time) const -> Time {
-    return tracking.time(get_index(time));
+    return tracking_.time(get_index(time));
+}
+
+template<typename Element_, IsTimePoint Time_>
+inline bool Tracking<Element_, Time_>::changed_last() const {
+    return last_time() == equal_since_time();
 }
 
 template<typename Element_, IsTimePoint Time_>
 inline auto Tracking<Element_, Time_>::equal_since_time() const -> Time {
-    throw_if(tracking.empty(), "No tracking available.");
-    for (std::size_t i = tracking.size() - 1; i > 0; --i) {
-        if (tracking.element(i - 1) != tracking.element_back()) {
-            return tracking.time(i);
+    throw_if(tracking_.empty(), "No tracking available.");
+    for (std::size_t i = tracking_.size() - 1; i > 0; --i) {
+        if (tracking_.element(i - 1) != tracking_.element_back()) {
+            return tracking_.time(i);
         }
     }
-    return tracking.time(0);
+    return tracking_.time(0);
+}
+
+template<typename Element_, IsTimePoint Time_>
+inline auto Tracking<Element_, Time_>::first() const -> const Element& {
+    throw_if(tracking_.empty(), "No tracking available.");
+    return tracking_.element(0);
+}
+
+template<typename Element_, IsTimePoint Time_>
+inline auto Tracking<Element_, Time_>::first(Time& update_time) const -> const Element& {
+    throw_if(tracking_.empty(), "No tracking available.");
+    update_time = tracking_.time(0);
+    return tracking_.element(0);
+}
+
+template<typename Element_, IsTimePoint Time_>
+inline auto Tracking<Element_, Time_>::first_time() const -> Time {
+    throw_if(tracking_.empty(), "No tracking available.");
+    return tracking_.time(0);
 }
 
 template<typename Element_, IsTimePoint Time_>
 inline bool Tracking<Element_, Time_>::has_tracking_at(const Time time) const {
-    return !tracking.empty() && tracking.start_time() <= time;
+    return !tracking_.empty() && tracking_.start_time() <= time;
+}
+
+template<typename Element_, IsTimePoint Time_>
+inline bool Tracking<Element_, Time_>::is_updated_once() const {
+    return tracking_.size() == 1;
 }
 
 template<typename Element_, IsTimePoint Time_>
 inline auto Tracking<Element_, Time_>::last() const -> const Element& {
-    throw_if(tracking.empty(), "No tracking available.");
-    return tracking.element_back();
+    throw_if(tracking_.empty(), "No tracking available.");
+    return tracking_.element_back();
 }
 
 template<typename Element_, IsTimePoint Time_>
 inline auto Tracking<Element_, Time_>::last_time() const -> Time {
-    throw_if(tracking.empty(), "No tracking available.");
-    return tracking.end_time();
+    throw_if(tracking_.empty(), "No tracking available.");
+    return tracking_.end_time();
+}
+
+template<typename Element_, IsTimePoint Time_>
+inline auto Tracking<Element_, Time_>::last_or(const Element& default_value) const -> Element {
+    return tracking_.empty() ? default_value : tracking_.element_back();
+}
+
+template<typename Element_, IsTimePoint Time_>
+inline auto Tracking<Element_, Time_>::next(const Time time) const -> const Element& {
+    return tracking_.element(get_index(time) + 1);
+}
+
+template<typename Element_, IsTimePoint Time_>
+inline auto Tracking<Element_, Time_>::next(const Time time, Time& update_time) const -> const Element& {
+    const int index = get_index(time) + 1;
+    update_time = tracking_.time(index);
+    return tracking_.element(index);
+}
+
+template<typename Element_, IsTimePoint Time_>
+inline auto Tracking<Element_, Time_>::next_time(const Time time) const -> Time {
+    return tracking_.time(get_index(time) + 1);
+}
+
+template<typename Element_, IsTimePoint Time_>
+inline auto Tracking<Element_, Time_>::previous() const -> const Element& {
+    throw_if(tracking_.size() <= 1, "Not enough tracking available.");
+    return tracking_.element(tracking_.size() - 2);
+}
+
+template<typename Element_, IsTimePoint Time_>
+inline auto Tracking<Element_, Time_>::previous_time() const -> Time {
+    throw_if(tracking_.size() <= 1, "Not enough tracking available.");
+    return tracking_.time(tracking_.size() - 2);
 }
 
 template<typename Element_, IsTimePoint Time_>
 inline void Tracking<Element_, Time_>::update(const Time update_time, const Element& element) {
-    if (tracking.empty()) {
-        tracking.emplace_back(update_time, element);
-    } else if (update_time < tracking.end_time()) {
+    if (tracking_.empty()) {
+        tracking_.emplace_back(update_time, element);
+    } else if (update_time < tracking_.end_time()) {
         throw_here("Tracking update time (" + cppbox::to_string(update_time) + ") precedes last update time (" +
-                   cppbox::to_string(tracking.end_time()) + ").");
-    } else if (tracking.element_back() == element &&
-               (tracking.size() >= 2 && tracking.element(tracking.size() - 2) == element)) {
+                   cppbox::to_string(tracking_.end_time()) + ").");
+    } else if (tracking_.element_back() == element &&
+               (tracking_.size() >= 2 && tracking_.element(tracking_.size() - 2) == element)) {
         // Update end time when tracking does not change for last two elements
-        tracking.change_end_time(update_time);
+        tracking_.change_end_time(update_time);
     } else {
         // Add new tracking element
-        tracking.emplace_back(update_time, element);
+        tracking_.emplace_back(update_time, element);
     }
 }
 
 template<typename Element_, IsTimePoint Time_>
 inline int Tracking<Element_, Time_>::get_index(const Time time) const {
-    const int index = tracking.time_keeper().find_index(time);
+    const int index = tracking_.time_keeper().find_index(time);
     throw_if(index < 0, "No tracking before query time " + cppbox::to_string(time) + ".");
     return index;
 }
@@ -133,6 +196,14 @@ void MultiTracking<Element_, Time_>::update(const Time update_time, const std::s
 }
 
 template<typename Element_, IsTimePoint Time_>
+void MultiTracking<Element_, Time_>::update(const Time update_time, const Element& element) {
+    for (auto& tracking_ : trackings_ | std::views::values) {
+        tracking_.update(update_time, element);
+    }
+    is_synchronised_ = true;
+}
+
+template<typename Element_, IsTimePoint Time_>
 inline bool MultiTracking<Element_, Time_>::is_synchronised() const {
     return is_synchronised_;
 }
@@ -140,6 +211,16 @@ inline bool MultiTracking<Element_, Time_>::is_synchronised() const {
 template<typename Element_, IsTimePoint Time_>
 inline bool MultiTracking<Element_, Time_>::is_synchronised_to(const Time time) const {
     return is_synchronised() && !trackings().empty() && trackings().cbegin()->second.last_time() == time;
+}
+
+template<typename Element_, IsTimePoint Time_>
+auto MultiTracking<Element_, Time_>::last_synchronised() const -> std::unordered_map<std::string, Element> {
+    throw_if(!is_synchronised() || trackings().empty(), "Last synchronised tracking does not exist.");
+    std::unordered_map<std::string, Element> last_synchronised_;
+    for (const auto& [key, tracking_] : trackings()) {
+        last_synchronised_.emplace(key, tracking_.last());
+    }
+    return last_synchronised_;
 }
 
 template<typename Element_, IsTimePoint Time_>
