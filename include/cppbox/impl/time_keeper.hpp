@@ -35,6 +35,11 @@ inline bool TimeKeeperBase<Time_>::has_time(const Time time_) const {
 }
 
 template<IsTimePoint Time_>
+inline bool TimeKeeperBase<Time_>::has_time_at(const int index, const Time time_) const {
+    return queriable(index) && time(index) == time_;
+}
+
+template<IsTimePoint Time_>
 inline bool TimeKeeperBase<Time_>::has_time_within(const Time time_) const {
     const int index = find_index(time_);
     return index >= 0 && (time(index) == time_ || index + 1 < size());
@@ -130,6 +135,11 @@ inline void OrderedTimeKeeper<Time_>::push_back(const Time time_) {
 }
 
 template<IsTimePoint Time_>
+inline bool OrderedTimeKeeper<Time_>::queriable(const int index) const {
+    return index >= 0 && index < size();
+}
+
+template<IsTimePoint Time_>
 inline void OrderedTimeKeeper<Time_>::require_time(const Time time_) {
     if (!this->has_time(time_)) {
         throw_if(time_ < end(), "Required time " + cppbox::to_string(time_) +
@@ -171,6 +181,7 @@ inline auto OrderedTimeKeeper<Time_>::times() const -> const std::vector<Time>& 
 
 template<IsTimePoint Time_>
 inline auto OrderedTimeKeeper<Time_>::time(const int index) const -> Time {
+    throw_if(index < 0, "Cannot request time at index " + std::to_string(index) + ".");
     return times().at(index);
 }
 
@@ -212,6 +223,11 @@ inline auto UniformTimeKeeper<Time_>::interval() const -> Duration {
 template<IsTimePoint Time_>
 inline void UniformTimeKeeper<Time_>::push_back(const Time) {
     throw_here("Times cannot be added to a uniform time keeper. Prefer `require_time(time_)` instead.");
+}
+
+template<IsTimePoint Time_>
+inline bool UniformTimeKeeper<Time_>::queriable(const int) const {
+    return true;
 }
 
 template<IsTimePoint Time_>

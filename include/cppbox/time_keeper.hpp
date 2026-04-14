@@ -88,6 +88,16 @@ public:
     virtual bool has_time(const Time time_) const;
 
     /**
+     * @brief Checks if time at `index` is equal to `time_`.
+     *
+     * @param index
+     * @param time_
+     * @return true
+     * @return false
+     */
+    virtual bool has_time_at(const int index, const Time time_) const;
+
+    /**
      * @brief Check if `time_` exists or is between two times.
      *
      * @param time_
@@ -126,6 +136,15 @@ public:
      * @param time_
      */
     virtual void push_back(const Time time_) = 0;
+
+    /**
+     * @brief Check if index `index` can be queried for a time (i.e., checks `index` is within bounds).
+     *
+     * @param index
+     * @return true if index is queriable
+     * @return false otherwise
+     */
+    virtual bool queriable(const int index) const = 0;
 
     /**
      * @brief Ensure that `time_` exists (exactly). If the `time_` does not exist, add it if possible and otherwise
@@ -258,6 +277,13 @@ public:
      * @param time_
      */
     void push_back(const Time time_) override;
+
+    /**
+     * @brief Checks if `index` is queriable, which must be within the range `[0, size())`.
+     *
+     * @param index
+     */
+    bool queriable(const int index) const override;
 
     /**
      * @brief Check if `time_` exists. If it doesn't and `time_` is >= `end()`, then add it. Otherwise, throw an
@@ -402,6 +428,13 @@ public:
      *
      */
     void push_back(const Time) override;
+
+    /**
+     * @brief Returns true.
+     *
+     * @param index
+     */
+    bool queriable(const int) const override;
 
     /**
      * @brief Reset the time keeper, clearing any stored data (no-op for UniformTimeKeeper).
