@@ -130,7 +130,8 @@ inline int OrderedTimeKeeper<Time_>::find_index_from_start(const Time time_) con
 
 template<IsTimePoint Time_>
 inline void OrderedTimeKeeper<Time_>::push_back(const Time time_) {
-    throw_if(!this->empty() && time_ < end(), "Failed to add time: time_ < end().");
+    throw_if(!this->empty() && time_ < end(),
+            "Failed to add time " + cppbox::to_string(time_) + " < end (" + cppbox::to_string(end()) + ").");
     times_.push_back(time_);
 }
 
@@ -142,9 +143,6 @@ inline bool OrderedTimeKeeper<Time_>::queriable(const int index) const {
 template<IsTimePoint Time_>
 inline void OrderedTimeKeeper<Time_>::require_time(const Time time_) {
     if (!this->has_time(time_)) {
-        throw_if(time_ < end(), "Required time " + cppbox::to_string(time_) +
-                                        " could not be added because it precedes end() == " + cppbox::to_string(end()) +
-                                        ".");
         push_back(time_);
     }
 }
@@ -152,9 +150,6 @@ inline void OrderedTimeKeeper<Time_>::require_time(const Time time_) {
 template<IsTimePoint Time_>
 inline void OrderedTimeKeeper<Time_>::require_time_within(const Time time_) {
     if (!this->has_time_within(time_)) {
-        throw_if(time_ < end(), "Required time " + cppbox::to_string(time_) +
-                                        " could not be added because it precedes end() == " + cppbox::to_string(end()) +
-                                        ".");
         push_back(time_);
     }
 }
