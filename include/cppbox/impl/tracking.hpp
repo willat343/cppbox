@@ -41,7 +41,7 @@ auto Tracking<Element_, Time_>::at(const Time time, TimeInterval<Time>& update_t
     } else {
         update_times.start() = update_time_;
     }
-    if (index + 1 < tracking_.size() && tracking_.element(index + 1) == element_) {
+    if (index + 1 < static_cast<int>(tracking_.size()) && tracking_.element(index + 1) == element_) {
         update_times.end() = tracking_.time(index + 1);
     } else {
         update_times.end() = update_time_;
