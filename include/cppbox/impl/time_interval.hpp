@@ -15,6 +15,11 @@ inline TimeInterval<Time_>::TimeInterval(const Time& start_, const Time& end_) :
 }
 
 template<IsTimePoint Time_>
+inline bool TimeInterval<Time_>::contains(const Time time) const {
+    return time >= start() && time <= end();
+}
+
+template<IsTimePoint Time_>
 inline auto TimeInterval<Time_>::end() const -> const Time& {
     return end_;
 }
@@ -42,6 +47,11 @@ inline auto TimeInterval<Time_>::start() -> Time& {
 template<IsTimePoint Time_>
 inline std::string TimeInterval<Time_>::to_string() const {
     return "[" + cppbox::to_string(start()) + ", " + cppbox::to_string(end()) + "]";
+}
+
+template<IsTimePoint Time_>
+std::ostream& operator<<(std::ostream& os, const TimeInterval<Time_>& interval) {
+    return os << interval.to_string();
 }
 
 template<IsTimePoint Time>

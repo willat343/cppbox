@@ -1,6 +1,7 @@
 #ifndef CPPBOX_TIME_INTERVAL_HPP
 #define CPPBOX_TIME_INTERVAL_HPP
 
+#include <ostream>
 #include <string>
 
 #include "cppbox/time.hpp"
@@ -17,6 +18,8 @@ public:
 
     explicit TimeInterval(const Time& start_, const Time& end_);
 
+    bool contains(const Time time) const;
+
     const Time& end() const;
 
     Time& end();
@@ -29,10 +32,15 @@ public:
 
     std::string to_string() const;
 
+    bool operator==(const TimeInterval&) const = default;
+
 private:
     Time start_;
     Time end_;
 };
+
+template<IsTimePoint Time_>
+std::ostream& operator<<(std::ostream& os, const TimeInterval<Time_>& interval);
 
 template<IsTimePoint Time>
 TimeInterval<Time> intersection_of(const TimeInterval<Time>& lhs, const TimeInterval<Time>& rhs);
