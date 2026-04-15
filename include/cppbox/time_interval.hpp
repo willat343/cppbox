@@ -20,6 +20,8 @@ public:
 
     bool contains(const Time time) const;
 
+    bool contains(const TimeInterval interval) const;
+
     const Time& end() const;
 
     Time& end();
@@ -31,6 +33,8 @@ public:
     Time& start();
 
     std::string to_string() const;
+
+    bool within(const TimeInterval interval) const;
 
     bool operator==(const TimeInterval&) const = default;
 
