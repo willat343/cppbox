@@ -32,8 +32,33 @@ inline auto Tracking<Element_, Time_>::at(const Time time, Time& update_time) co
 }
 
 template<typename Element_, IsTimePoint Time_>
+auto Tracking<Element_, Time_>::at(const Time time, TimeInterval<Time>& update_times) const -> const Element& {
+    const int index = get_index(time);
+    const Element& element_ = tracking_.element(index);
+    const Time update_time_ = tracking_.time(index);
+    if (index > 0 && tracking_.element(index - 1) == element_) {
+        update_times.start() = tracking_.time(index - 1);
+    } else {
+        update_times.start() = update_time_;
+    }
+    if (index + 1 < tracking_.size() && tracking_.element(index + 1) == element_) {
+        update_times.end() = tracking_.time(index + 1);
+    } else {
+        update_times.end() = update_time_;
+    }
+    return element_;
+}
+
+template<typename Element_, IsTimePoint Time_>
 inline auto Tracking<Element_, Time_>::at_time(const Time time) const -> Time {
     return tracking_.time(get_index(time));
+}
+
+template<typename Element_, IsTimePoint Time_>
+inline auto Tracking<Element_, Time_>::at_time_interval(const Time time) const -> TimeInterval<Time> {
+    TimeInterval<Time> time_interval_;
+    at(time, time_interval_);
+    return time_interval_;
 }
 
 template<typename Element_, IsTimePoint Time_>

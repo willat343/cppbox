@@ -7,6 +7,7 @@
 
 #include "cppbox/temporal_vector.hpp"
 #include "cppbox/time.hpp"
+#include "cppbox/time_interval.hpp"
 
 namespace cppbox {
 
@@ -65,14 +66,37 @@ public:
     const Element& at(const Time time, Time& update_time) const;
 
     /**
+     * @brief Element at or before a query time.
+     *
+     * @param time query time
+     * @param update_times time bounds for element, such that the start and end times (may be equal) indicate the known
+     * time interval when the element equals its returned value, noting that `time` may be within the interval or after
+     * the interval (i.e. a tracking transition occured between end time and the next time or the end time is the last
+     * known time)
+     * @return const Element&
+     */
+    const Element& at(const Time time, TimeInterval<Time>& update_times) const;
+
+    /**
      * @brief Get the update time corresponding to a query time.
      *
-     * If the Element is also needed, use the `const Element& at(const Time, Time&) const` overload.
+     * This returns the second argument of `const Element& at(const Time, Time&) const` without returning the element.
      *
      * @param time query time
      * @return Time the time of the update
      */
     Time at_time(const Time time) const;
+
+    /**
+     * @brief Get the time bounds for an element corresponding to a query time.
+     *
+     * This returns the second argument of `const Element& at(const Time, TimeInterval<Time>&) const` without returning
+     * the element.
+     *
+     * @param time query time
+     * @return TimeInterval<Time>
+     */
+    TimeInterval<Time> at_time_interval(const Time time) const;
 
     /**
      * @brief Check if the element changed at the last update (including if the last update was the first).
@@ -93,7 +117,7 @@ public:
     /**
      * @brief Get the first update element.
      *
-     * If the update time is also needed, use the `const Element& first(Time&) const` overload.
+     * If the update time is also needed, use `const Element& first(Time&) const`.
      *
      * @return const Element&
      */
