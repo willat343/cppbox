@@ -116,6 +116,32 @@ inline BytesDecoder* BytesDecoder::parent_decoder() {
     return const_cast<BytesDecoder*>(std::as_const(*this).parent_decoder());
 }
 
+inline const std::byte* BytesEncoder::bytes() const {
+    return bytes_.data();
+}
+
+inline bool BytesEncoder::empty() const {
+    return bytes_.empty();
+}
+
+inline std::size_t BytesEncoder::size() const {
+    return bytes_.size();
+}
+
+template<typename T>
+    requires(std::is_trivially_copyable_v<T>)
+inline void BytesEncoder::write(const T in) {
+    const std::size_t old_size = size();
+    bytes_.resize(old_size + sizeof(T));
+    std::memcpy(bytes_.data() + old_size, &in, sizeof(T));
+}
+
+inline void BytesEncoder::write(const std::string& in) {
+    const std::size_t old_size = size();
+    bytes_.resize(old_size + in.size());
+    std::memcpy(bytes_.data() + old_size, in.data(), in.size());
+}
+
 }
 
 #if CPPBOX_HEADER_ONLY

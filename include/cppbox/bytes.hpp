@@ -4,6 +4,7 @@
 #include <cstddef>
 #include <string>
 #include <type_traits>
+#include <vector>
 
 namespace cppbox {
 
@@ -75,6 +76,26 @@ private:
     std::size_t size_;
     std::size_t offset_;
     BytesDecoder* parent_decoder_;
+};
+
+class BytesEncoder {
+public:
+    explicit BytesEncoder() = default;
+
+    const std::byte* bytes() const;
+
+    bool empty() const;
+
+    std::size_t size() const;
+
+    template<typename T>
+        requires(std::is_trivially_copyable_v<T>)
+    void write(const T in);
+
+    void write(const std::string& in);
+
+private:
+    std::vector<std::byte> bytes_;
 };
 
 }
