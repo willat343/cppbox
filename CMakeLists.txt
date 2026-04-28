@@ -158,6 +158,6 @@ if (BUILD_DOCUMENTATION)
 endif()
 
 # Build Tests
-if (BUILD_TESTS)
+if (BUILD_TESTING)
     add_subdirectory(test)
 endif()
