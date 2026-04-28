@@ -159,8 +159,8 @@ inline void Tracking<Element_, Time_>::update(const Time update_time, const Elem
     } else if (update_time < tracking_.end_time()) {
         throw_here("Tracking update time (" + cppbox::to_string(update_time) + ") precedes last update time (" +
                    cppbox::to_string(tracking_.end_time()) + ").");
-    } else if (tracking_.element_back() == element &&
-               (tracking_.size() >= 2 && tracking_.element(tracking_.size() - 2) == element)) {
+    } else if (tracking_.size() >= 2 && tracking_.element(tracking_.size() - 1) == element &&
+               tracking_.element(tracking_.size() - 2) == element) {
         // Update end time when tracking does not change for last two elements
         tracking_.change_end_time(update_time);
     } else {
