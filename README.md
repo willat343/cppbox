@@ -7,7 +7,7 @@ Collection of general-purpose C++ functions, classes and utilities
 | **Dependency** | **Version** | **Description** |
 |----------------|-------------|-----------------|
 | CMake | >= 3.21 | CMake Build Tool |
-| [cmakebox](https://github.com/willat343/cmakebox) | >= 0.0.9 | CMake Functions and Utilities |
+| [cmakebox](https://github.com/willat343/cmakebox) | >= 0.0.11 | CMake Functions and Utilities |
 
 There are several ways to include `cppbox` within your project:
 - [Preferred] Via `FetchContent` allowing package to be built as a submodule.
@@ -15,9 +15,9 @@ There are several ways to include `cppbox` within your project:
 
 ## Include via FetchContent
 
-It is recommended to leverage the functionality of [cmakebox](https://github.com/willat343/cmakebox) by including the following lines in the `CMakeLists.txt` (replace `X.Y.Z` with version):
+It is recommended to leverage the functionality of [cmakebox](https://github.com/willat343/cmakebox) by including the following lines in the `CMakeLists.txt` (replace `X.Y.Z` with versions for each):
 ```CMake
-set(CMAKEBOX_VERSION "0.0.9")
+set(CMAKEBOX_VERSION "X.Y.Z")
 FetchContent_Declare(
     cmakebox
     GIT_REPOSITORY git@github.com:willat343/cmakebox.git
@@ -59,15 +59,11 @@ cd cppbox
 
 ### Configure
 
-For system install:
 ```bash
-cmake -S . -B build
+cmake -G Ninja -S . -B build
 ```
 
-For local install:
-```bash
-cmake -S . -B build -DCMAKE_INSTALL_DIR=$HOME/.local
-```
+For local install add `-DCMAKE_INSTALL_DIR=$HOME/.local`.
 
 ### Build
 
@@ -85,8 +81,12 @@ sudo cmake --build build --target install
 
 Include with the following lines in the `CMakeLists.txt`:
 ```CMake
-find_package(cppbox REQUIRED)
 target_link_libraries(<target> PUBLIC cppbox::cppbox)
+```
+
+If `cppbox` was installed (rather than using `cmakebox` or `FetchContent` functionality), then also needed is:
+```CMake
+find_package(cppbox REQUIRED)
 ```
 
 ### Uninstall
@@ -120,7 +120,7 @@ To use the package in a downstream project, one should add to their `package.xml
 <depend>cppbox</depend>
 ```
 
-One can then include `cppbox` package by includeing in the `CMakeLists.txt`:
+One can then include `cppbox` package by including in the `CMakeLists.txt`:
 ```CMake
 find_package(cppbox REQUIRED)
 target_link_libraries(<target> PUBLIC cppbox::cppbox)

@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.21)
 project(cppbox
-    VERSION 0.1.5
+    VERSION 0.2.0
     DESCRIPTION "Collection of general-purpose C++ functions, classes and utilities"
     LANGUAGES CXX
 )
@@ -27,7 +27,7 @@ if (DEVELOPER_MODE)
 endif()
 
 # Dependency: cmakebox
-set(CMAKEBOX_VERSION "0.0.9")
+set(CMAKEBOX_VERSION "0.0.11")
 FetchContent_Declare(
     cmakebox
     GIT_REPOSITORY git@github.com:willat343/cmakebox.git
