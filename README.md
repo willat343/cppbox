@@ -81,12 +81,8 @@ sudo cmake --build build --target install
 
 Include with the following lines in the `CMakeLists.txt`:
 ```CMake
-target_link_libraries(<target> PUBLIC cppbox::cppbox)
-```
-
-If `cppbox` was installed (rather than using `cmakebox` or `FetchContent` functionality), then also needed is:
-```CMake
 find_package(cppbox REQUIRED)
+target_link_libraries(<target> PUBLIC cppbox::cppbox)
 ```
 
 ### Uninstall
