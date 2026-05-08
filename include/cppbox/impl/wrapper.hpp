@@ -23,6 +23,24 @@ Wrapper<T>::operator T&() const {
     return object_;
 }
 
+template<typename T>
+ConstWrapper<T>::ConstWrapper(const T& object_) : object_(object_) {}
+
+template<typename T>
+const T* ConstWrapper<T>::operator->() const {
+    return &object_;
+}
+
+template<typename T>
+const T& ConstWrapper<T>::operator*() const {
+    return object_;
+}
+
+template<typename T>
+ConstWrapper<T>::operator const T&() const {
+    return object_;
+}
+
 }
 
 #endif

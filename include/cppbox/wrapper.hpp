@@ -61,6 +61,61 @@ struct is_wrapper<Wrapper<T>> : std::true_type {};
 template<typename T>
 concept IsWrapper = is_wrapper<std::remove_reference_t<T>>::value;
 
+/**
+ * @brief A transparent wrapper type to hold an object const reference.
+ *
+ * @tparam T
+ */
+template<typename T>
+class ConstWrapper {
+public:
+    using type = T;
+
+    /**
+     * @brief Construct a wrapper.
+     *
+     * @param object_
+     */
+    explicit ConstWrapper(const T& object_);
+
+    /**
+     * @brief Direct member access, e.g. `wrapper->method(...)`.
+     *
+     * @return const T*
+     */
+    const T* operator->() const;
+
+    /**
+     * @brief Pointer-like access, e.g. `(*wrapper)->method(...)`.
+     *
+     * @return T&
+     */
+    const T& operator*() const;
+
+    /**
+     * @brief Implicit conversion to the underlying type allows it to be passed to functions expecting the wrapped type.
+     *
+     * @return const T&
+     */
+    operator const T&() const;
+
+private:
+    /**
+     * @brief Hold a reference to the wrapped object.
+     *
+     */
+    const T& object_;
+};
+
+template<typename T>
+struct is_const_wrapper : std::false_type {};
+
+template<typename T>
+struct is_const_wrapper<Wrapper<T>> : std::true_type {};
+
+template<typename T>
+concept IsConstWrapper = is_const_wrapper<std::remove_reference_t<T>>::value;
+
 }
 
 #include "cppbox/impl/wrapper.hpp"
