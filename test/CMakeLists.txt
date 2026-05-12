@@ -25,6 +25,9 @@ target_compile_options(${TESTS_NAME} PRIVATE
     -Wall
     -Wextra
     -Wpedantic
+    -Wfatal-errors
+    $<$<BOOL:${DEBUG_ENABLE_ADDRESS_SANITIZER}>:-fsanitize=address>
+    $<$<BOOL:${DEBUG_NO_OMIT_FRAME_POINTER}>:-fno-omit-frame-pointer>
 )
 
 # Link Libraries
@@ -33,6 +36,11 @@ target_link_libraries(${TESTS_NAME} PUBLIC
     gtest_main
     gtest
     pthread
+)
+
+# Link Options
+target_link_options(${TESTS_NAME} PRIVATE
+    $<$<BOOL:${DEBUG_ENABLE_ADDRESS_SANITIZER}>:-fsanitize=address>
 )
 
 # Add test

@@ -20,6 +20,8 @@ option(BUILD_DOCUMENTATION "Build Doxygen Documentation" OFF)
 option(BUILD_SHARED_LIBS "Build shared library (if CPPBOX_HEADER_ONLY=OFF)" OFF)
 option(CPPBOX_HEADER_ONLY "Build library as header-only" OFF)
 option(DEVELOPER_MODE "Use local versions of cmakebox" OFF)
+option(DEBUG_ENABLE_ADDRESS_SANITIZER "Enables address sanitizer compile/link flags" OFF)
+option(DEBUG_NO_OMIT_FRAME_POINTER "Add compile flag for more reliable stack traces" OFF)
 
 # Configure FetchContent source directories for DEVELOPER_MODE
 if (DEVELOPER_MODE)
@@ -57,11 +59,19 @@ else()
     )
     set(PUBLIC_OR_INTERFACE PUBLIC)
 
-    # Private Compile Options
+    # Compile Options
     target_compile_options(${LIBRARY_NAME} PRIVATE
         -Wall
         -Wextra
         -Wpedantic
+        -Wfatal-errors
+        $<$<BOOL:${DEBUG_ENABLE_ADDRESS_SANITIZER}>:-fsanitize=address>
+        $<$<BOOL:${DEBUG_NO_OMIT_FRAME_POINTER}>:-fno-omit-frame-pointer>
+    )
+
+    # Link Options
+    target_link_options(${LIBRARY_NAME} PRIVATE
+        $<$<BOOL:${DEBUG_ENABLE_ADDRESS_SANITIZER}>:-fsanitize=address>
     )
 endif()
 add_library(${PROJECT_NAME}::${LIBRARY_NAME} ALIAS ${LIBRARY_NAME})
