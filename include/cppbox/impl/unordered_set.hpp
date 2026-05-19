@@ -13,6 +13,15 @@ std::unordered_set<Key, Hash, KeyEqual, Allocator> merge(const std::unordered_se
     return result;
 }
 
+template<class Key, class Hash, class KeyEqual, class Allocator, ForwardRangeOf<Key> Keys>
+std::size_t erase_in_place(std::unordered_set<Key, Hash, KeyEqual, Allocator>& set, const Keys& keys) {
+    std::size_t num_erased{0};
+    for (const Key& key : keys) {
+        num_erased += set.erase(key);
+    }
+    return num_erased;
+}
+
 }
 
 #endif
