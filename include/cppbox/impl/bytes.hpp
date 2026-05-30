@@ -25,6 +25,10 @@ inline const std::byte* BytesDecoder::bytes() const {
     return bytes_;
 }
 
+inline void BytesDecoder::ignore_bytes(const std::size_t num_ignore) {
+    increment_offset(num_ignore);
+}
+
 template<typename T>
     requires(std::is_trivially_copyable_v<T>)
 inline void BytesDecoder::ignore(const std::size_t num_ignore) {

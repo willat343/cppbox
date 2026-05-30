@@ -20,6 +20,8 @@ public:
 
     BytesDecoder create_internal_decoder(const std::size_t internal_size);
 
+    void ignore_bytes(const std::size_t num_ignore);
+
     template<typename T>
         requires(std::is_trivially_copyable_v<T>)
     void ignore(const std::size_t num_ignore = 1);
