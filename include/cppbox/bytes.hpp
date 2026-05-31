@@ -42,6 +42,13 @@ public:
 
     std::size_t offset() const;
 
+    /**
+     * @brief Overall offset including that of parent decoders (recursively).
+     *
+     * @return std::size_t
+     */
+    std::size_t offset_overall() const;
+
     template<typename T>
         requires(std::is_trivially_copyable_v<T>)
     T peak(const std::size_t extra_offset = 0) const;
@@ -64,6 +71,8 @@ public:
 
 protected:
     explicit BytesDecoder(const std::byte* bytes_, const std::size_t size_, BytesDecoder* parent_decoder_);
+
+    void decrement_offset(const std::size_t num_bytes);
 
     void increment_offset(const std::size_t num_bytes);
 

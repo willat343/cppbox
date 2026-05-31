@@ -63,6 +63,10 @@ inline std::size_t BytesDecoder::offset() const {
     return offset_;
 }
 
+inline std::size_t BytesDecoder::offset_overall() const {
+    return offset() + (is_internal_decoder() ? parent_decoder()->offset_overall() : 0);
+}
+
 template<typename T>
     requires(std::is_trivially_copyable_v<T>)
 inline T BytesDecoder::peak(const std::size_t extra_offset) const {
@@ -103,10 +107,17 @@ inline std::size_t BytesDecoder::size() const {
 inline BytesDecoder::BytesDecoder(const std::byte* bytes_, const std::size_t size_, BytesDecoder* parent_decoder_)
     : bytes_(bytes_), size_(size_), offset_(0), parent_decoder_(parent_decoder_) {}
 
+inline void BytesDecoder::decrement_offset(const std::size_t num_bytes) {
+    assert(num_bytes <= offset_);
+    offset_ -= num_bytes;
+    if (is_internal_decoder()) {
+        parent_decoder()->decrement_offset(num_bytes);
+    }
+}
+
 inline void BytesDecoder::increment_offset(const std::size_t num_bytes) {
-    assert(num_bytes <= size_);
+    assert(offset_ + num_bytes <= size_);
     offset_ += num_bytes;
-    assert(offset_ <= size_);
     if (is_internal_decoder()) {
         parent_decoder()->increment_offset(num_bytes);
     }

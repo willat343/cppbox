@@ -28,7 +28,7 @@ CPPBOX_INLINE std::string BytesDecoder::to_hex_string(const std::size_t num_byte
     std::stringstream ss;
     ss << std::hex << std::showbase << std::setfill('0');
     for (std::size_t i = 0; i < num_bytes; ++i) {
-        ss << (i == 0 ? "" : " ") << "0x" << std::setw(2)
+        ss << (i == 0 ? "" : " ") << std::setw(2)
            << static_cast<unsigned int>(*(bytes() + offset() + extra_offset + i));
     }
     return ss.str();
