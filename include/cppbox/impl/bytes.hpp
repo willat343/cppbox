@@ -64,7 +64,7 @@ inline std::size_t BytesDecoder::offset() const {
 }
 
 inline std::size_t BytesDecoder::offset_overall() const {
-    return offset() + (is_internal_decoder() ? parent_decoder()->offset_overall() : 0);
+    return is_internal_decoder() ? parent_decoder()->offset_overall() : offset();
 }
 
 template<typename T>
