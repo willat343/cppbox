@@ -4,6 +4,7 @@ set(TESTS_NAME ${PROJECT_NAME}_tests)
 add_executable(${TESTS_NAME}
     src/map.cpp
     src/tracking.cpp
+    src/tracking_events.cpp
     src/traits.cpp
     src/unordered_map.cpp
     src/unordered_set.cpp
