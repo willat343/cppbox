@@ -244,6 +244,9 @@ private:
 template<typename Time>
 using BinaryTracking = Tracking<bool, Time>;
 
+template<typename Time>
+using SizeTracking = Tracking<std::size_t, Time>;
+
 template<typename Element_, IsTimePoint Time_>
 class MultiTracking {
 public:
@@ -388,6 +391,9 @@ private:
 
 template<typename Time>
 using BinaryMultiTracking = MultiTracking<bool, Time>;
+
+template<typename Time>
+using SizeMultiTracking = MultiTracking<std::size_t, Time>;
 
 }
 
