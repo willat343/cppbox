@@ -44,6 +44,24 @@ public:
     bool empty() const;
 
     /**
+     * @brief Check if any events have been registered before `time`.
+     *
+     * @param time
+     * @return true
+     * @return false
+     */
+    bool empty_before(const Time time) const;
+
+    /**
+     * @brief Check if any events have been registered after `time`.
+     *
+     * @param time
+     * @return true
+     * @return false
+     */
+    bool empty_after(const Time time) const;
+
+    /**
      * @brief Number of registered events.
      *
      * @return std::size_t

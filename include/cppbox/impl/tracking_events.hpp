@@ -20,6 +20,16 @@ inline bool TrackingEvents<Time_>::empty() const {
 }
 
 template<IsTimePoint Time_>
+inline bool TrackingEvents<Time_>::empty_before(const Time time) const {
+    return times_.empty() || time < first_time();
+}
+
+template<IsTimePoint Time_>
+inline bool TrackingEvents<Time_>::empty_after(const Time time) const {
+    return times_.empty() || time > last_time();
+}
+
+template<IsTimePoint Time_>
 inline std::size_t TrackingEvents<Time_>::size() const {
     return times_.size();
 }

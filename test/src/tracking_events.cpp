@@ -17,6 +17,11 @@ TEST(tracking_events, previous_and_next_times) {
     events.register_event(start + Duration(4));
     events.register_event(start + Duration(8));
 
+    EXPECT_TRUE(events.empty_before(start));
+    EXPECT_FALSE(events.empty_before(start + Duration(4)));
+    EXPECT_FALSE(events.empty_after(start + Duration(4)));
+    EXPECT_TRUE(events.empty_after(start + Duration(8)));
+
     EXPECT_EQ(events.previous_time(start + Duration(3)), start);
     EXPECT_EQ(events.previous_time(start + Duration(4)), start + Duration(4));
     EXPECT_EQ(events.previous_time(start + Duration(9)), start + Duration(8));
