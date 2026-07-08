@@ -58,17 +58,85 @@ inline void TrackingEvents<Time_>::register_event(const Time time) {
 template<IsTimePoint Time_>
 inline auto TrackingEvents<Time_>::previous_time(const Time time) const -> Time {
     throw_if(empty(), "No events available.");
+
+    // Quick check for extreme cases
+    if (time < first_time()) {
+        throw_if(true, "No event available at or before query time " + cppbox::to_string(time) + ".");
+    }
+    if (time >= last_time()) {
+        return last_time();
+    }
+
+    // Binary search for the general case (because of quick checks, iterator will always be found)
     const auto it = std::upper_bound(times_.cbegin(), times_.cend(), time);
-    throw_if(it == times_.cbegin(), "No event available at or before query time " + cppbox::to_string(time) + ".");
     return *std::prev(it);
+}
+
+template<IsTimePoint Time_>
+inline auto TrackingEvents<Time_>::previous_time_from_end(const Time time) const -> Time {
+    throw_if(empty(), "No events available.");
+    // Search backward from end
+    for (int i = static_cast<int>(times_.size()) - 1; i >= 0; --i) {
+        if (times_[i] <= time) {
+            return times_[i];
+        }
+    }
+    throw_if(true, "No event available at or before query time " + cppbox::to_string(time) + ".");
+}
+
+template<IsTimePoint Time_>
+inline auto TrackingEvents<Time_>::previous_time_from_start(const Time time) const -> Time {
+    throw_if(empty(), "No events available.");
+    // Search forward from start
+    for (std::size_t i = 0; i < times_.size(); ++i) {
+        if (times_[i] > time) {
+            throw_if(i == 0, "No event available at or before query time " + cppbox::to_string(time) + ".");
+            return times_[i - 1];
+        }
+    }
+    // All times are <= query time, use the last one
+    return times_.back();
 }
 
 template<IsTimePoint Time_>
 inline auto TrackingEvents<Time_>::next_time(const Time time) const -> Time {
     throw_if(empty(), "No events available.");
+
+    // Quick check for extreme cases
+    if (time <= first_time()) {
+        return first_time();
+    }
+    if (time > last_time()) {
+        throw_if(true, "No event available at or after query time " + cppbox::to_string(time) + ".");
+    }
+
+    // Binary search for the general case
     const auto it = std::lower_bound(times_.cbegin(), times_.cend(), time);
-    throw_if(it == times_.cend(), "No event available at or after query time " + cppbox::to_string(time) + ".");
     return *it;
+}
+
+template<IsTimePoint Time_>
+inline auto TrackingEvents<Time_>::next_time_from_start(const Time time) const -> Time {
+    throw_if(empty(), "No events available.");
+    // Search forward from start
+    for (std::size_t i = 0; i < times_.size(); ++i) {
+        if (times_[i] >= time) {
+            return times_[i];
+        }
+    }
+    throw_if(true, "No event available at or after query time " + cppbox::to_string(time) + ".");
+}
+
+template<IsTimePoint Time_>
+inline auto TrackingEvents<Time_>::next_time_from_end(const Time time) const -> Time {
+    throw_if(empty(), "No events available.");
+    // Search backward from end
+    for (int i = static_cast<int>(times_.size()) - 1; i >= 0; --i) {
+        if (times_[i] >= time) {
+            return times_[i];
+        }
+    }
+    throw_if(true, "No event available at or after query time " + cppbox::to_string(time) + ".");
 }
 
 template<IsTimePoint Time_>
@@ -77,8 +145,28 @@ inline auto TrackingEvents<Time_>::duration_since(const Time time) const -> Dura
 }
 
 template<IsTimePoint Time_>
+inline auto TrackingEvents<Time_>::duration_since_from_end(const Time time) const -> Duration {
+    return time - previous_time_from_end(time);
+}
+
+template<IsTimePoint Time_>
+inline auto TrackingEvents<Time_>::duration_since_from_start(const Time time) const -> Duration {
+    return time - previous_time_from_start(time);
+}
+
+template<IsTimePoint Time_>
 inline auto TrackingEvents<Time_>::duration_until(const Time time) const -> Duration {
     return next_time(time) - time;
+}
+
+template<IsTimePoint Time_>
+inline auto TrackingEvents<Time_>::duration_until_from_end(const Time time) const -> Duration {
+    return next_time_from_end(time) - time;
+}
+
+template<IsTimePoint Time_>
+inline auto TrackingEvents<Time_>::duration_until_from_start(const Time time) const -> Duration {
+    return next_time_from_start(time) - time;
 }
 
 }

@@ -92,18 +92,68 @@ public:
     /**
      * @brief Get the latest event time at or before a query time.
      *
+     * Uses binary search with quick checks for first/last time extremes.
+     * Complexity: O(1) if query is before first event or after last event, O(log n) otherwise.
+     *
      * @param time query time
      * @return Time
      */
     Time previous_time(const Time time) const;
 
     /**
+     * @brief Get the latest event time at or before a query time, searching linearly from the end.
+     *
+     * Use this when you know the query time is near the end of the event stream.
+     * Complexity: O(n) worst case, but O(1) amortized for queries near the end.
+     *
+     * @param time query time
+     * @return Time
+     */
+    Time previous_time_from_end(const Time time) const;
+
+    /**
+     * @brief Get the latest event time at or before a query time, searching linearly from the start.
+     *
+     * Use this when you know the query time is near the start of the event stream.
+     * Complexity: O(n) worst case, but O(1) amortized for queries near the start.
+     *
+     * @param time query time
+     * @return Time
+     */
+    Time previous_time_from_start(const Time time) const;
+
+    /**
      * @brief Get the earliest event time at or after a query time.
+     *
+     * Uses binary search with quick checks for first/last time extremes.
+     * Complexity: O(1) if query is before first event or after last event, O(log n) otherwise.
      *
      * @param time query time
      * @return Time
      */
     Time next_time(const Time time) const;
+
+    /**
+     * @brief Get the earliest event time at or after a query time, searching linearly from the start.
+     *
+     * Use this when you know the query time is near the start of the event stream.
+     * Complexity: O(n) worst case, but O(1) amortized for queries near the start.
+     *
+     * @param time query time
+     * @return Time
+     */
+    Time next_time_from_start(const Time time) const;
+
+    /**
+     * @brief Get the earliest event time at or after a query time, searching linearly from the end.
+     *
+     * Use this when you know the query time is near the end of the event stream.
+     * Complexity: O(n) worst case, but O(1) amortized for queries near the end.
+     *
+     * @param time query time
+     * @return Time
+     */
+    Time next_time_from_end(const Time time) const;
 
     /**
      * @brief Get the duration to the previous time.
@@ -114,12 +164,52 @@ public:
     Duration duration_since(const Time time) const;
 
     /**
+     * @brief Get the duration to the previous time, searching from the end.
+     *
+     * Use this when you know the query time is near the end of the event stream.
+     *
+     * @param time
+     * @return Duration
+     */
+    Duration duration_since_from_end(const Time time) const;
+
+    /**
+     * @brief Get the duration to the previous time, searching from the start.
+     *
+     * Use this when you know the query time is near the start of the event stream.
+     *
+     * @param time
+     * @return Duration
+     */
+    Duration duration_since_from_start(const Time time) const;
+
+    /**
      * @brief Get the duration to the next time.
      *
      * @param time
      * @return Duration
      */
     Duration duration_until(const Time time) const;
+
+    /**
+     * @brief Get the duration to the next time, searching from the end.
+     *
+     * Use this when you know the query time is near the end of the event stream.
+     *
+     * @param time
+     * @return Duration
+     */
+    Duration duration_until_from_end(const Time time) const;
+
+    /**
+     * @brief Get the duration to the next time, searching from the start.
+     *
+     * Use this when you know the query time is near the start of the event stream.
+     *
+     * @param time
+     * @return Duration
+     */
+    Duration duration_until_from_start(const Time time) const;
 
 private:
     std::vector<Time> times_;
