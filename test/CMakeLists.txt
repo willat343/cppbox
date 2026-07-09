@@ -2,6 +2,7 @@ set(TESTS_NAME ${PROJECT_NAME}_tests)
 
 # Build Example
 add_executable(${TESTS_NAME}
+    src/constexpr_map.cpp
     src/map.cpp
     src/tracking.cpp
     src/tracking_events.cpp
