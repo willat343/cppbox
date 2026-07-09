@@ -44,6 +44,24 @@ public:
     bool empty() const;
 
     /**
+     * @brief Check if any events have been registered at or before `time`.
+     *
+     * @param time
+     * @return true
+     * @return false
+     */
+    bool empty_at_or_before(const Time time) const;
+
+    /**
+     * @brief Check if any events have been registered at or after `time`.
+     *
+     * @param time
+     * @return true
+     * @return false
+     */
+    bool empty_at_or_after(const Time time) const;
+
+    /**
      * @brief Check if any events have been registered before `time`.
      *
      * @param time
@@ -67,6 +85,13 @@ public:
      * @return std::size_t
      */
     std::size_t size() const;
+
+    /**
+     * @brief The registered events. This function is not typically needed.
+     *
+     * @return const std::vector<Time>&
+     */
+    const std::vector<Time>& times() const;
 
     /**
      * @brief Get the first registered event time.

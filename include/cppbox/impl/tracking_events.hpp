@@ -20,18 +20,33 @@ inline bool TrackingEvents<Time_>::empty() const {
 }
 
 template<IsTimePoint Time_>
-inline bool TrackingEvents<Time_>::empty_before(const Time time) const {
+inline bool TrackingEvents<Time_>::empty_at_or_before(const Time time) const {
     return times_.empty() || time < first_time();
 }
 
 template<IsTimePoint Time_>
-inline bool TrackingEvents<Time_>::empty_after(const Time time) const {
+inline bool TrackingEvents<Time_>::empty_at_or_after(const Time time) const {
     return times_.empty() || time > last_time();
+}
+
+template<IsTimePoint Time_>
+inline bool TrackingEvents<Time_>::empty_before(const Time time) const {
+    return times_.empty() || time <= first_time();
+}
+
+template<IsTimePoint Time_>
+inline bool TrackingEvents<Time_>::empty_after(const Time time) const {
+    return times_.empty() || time >= last_time();
 }
 
 template<IsTimePoint Time_>
 inline std::size_t TrackingEvents<Time_>::size() const {
     return times_.size();
+}
+
+template<IsTimePoint Time_>
+inline auto TrackingEvents<Time_>::times() const -> const std::vector<Time>& {
+    return times_;
 }
 
 template<IsTimePoint Time_>
@@ -48,10 +63,9 @@ inline auto TrackingEvents<Time_>::last_time() const -> Time {
 
 template<IsTimePoint Time_>
 inline void TrackingEvents<Time_>::register_event(const Time time) {
-    if (!times_.empty()) {
-        throw_if(time < times_.back(), "Event time (" + cppbox::to_string(time) + ") precedes last event time (" +
-                                               cppbox::to_string(times_.back()) + ").");
-    }
+    throw_if(!empty() && time < last_time(), "Event time (" + cppbox::to_string(time) +
+                                                     ") must be after last event time (" +
+                                                     cppbox::to_string(times_.back()) + ").");
     times_.push_back(time);
 }
 
@@ -76,7 +90,7 @@ template<IsTimePoint Time_>
 inline auto TrackingEvents<Time_>::previous_time_from_end(const Time time) const -> Time {
     throw_if(empty(), "No events available.");
     // Search backward from end
-    for (int i = static_cast<int>(times_.size()) - 1; i >= 0; --i) {
+    for (int i = static_cast<int>(size()) - 1; i >= 0; --i) {
         if (times_[i] <= time) {
             return times_[i];
         }
@@ -88,14 +102,14 @@ template<IsTimePoint Time_>
 inline auto TrackingEvents<Time_>::previous_time_from_start(const Time time) const -> Time {
     throw_if(empty(), "No events available.");
     // Search forward from start
-    for (std::size_t i = 0; i < times_.size(); ++i) {
+    for (std::size_t i = 0; i < size(); ++i) {
         if (times_[i] > time) {
             throw_if(i == 0, "No event available at or before query time " + cppbox::to_string(time) + ".");
             return times_[i - 1];
         }
     }
     // All times are <= query time, use the last one
-    return times_.back();
+    return last_time();
 }
 
 template<IsTimePoint Time_>
@@ -119,7 +133,7 @@ template<IsTimePoint Time_>
 inline auto TrackingEvents<Time_>::next_time_from_start(const Time time) const -> Time {
     throw_if(empty(), "No events available.");
     // Search forward from start
-    for (std::size_t i = 0; i < times_.size(); ++i) {
+    for (std::size_t i = 0; i < size(); ++i) {
         if (times_[i] >= time) {
             return times_[i];
         }
@@ -131,12 +145,14 @@ template<IsTimePoint Time_>
 inline auto TrackingEvents<Time_>::next_time_from_end(const Time time) const -> Time {
     throw_if(empty(), "No events available.");
     // Search backward from end
-    for (int i = static_cast<int>(times_.size()) - 1; i >= 0; --i) {
-        if (times_[i] >= time) {
-            return times_[i];
+    for (int i = static_cast<int>(size()) - 1; i >= 0; --i) {
+        if (times_[i] < time) {
+            throw_if(i == static_cast<int>(size()) - 1,
+                    "No event available at or after query time " + cppbox::to_string(time) + ".");
+            return times_[i + 1];
         }
     }
-    throw_if(true, "No event available at or after query time " + cppbox::to_string(time) + ".");
+    return first_time();
 }
 
 template<IsTimePoint Time_>
