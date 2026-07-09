@@ -2,13 +2,23 @@
 #define CPPBOX_ENUM_HPP
 
 #include <array>
+#include <concepts>
 #include <ostream>
 #include <stdexcept>
 #include <string>
+#include <type_traits>
 
 #include "cppbox/exceptions.hpp"
 #include "cppbox/macro.hpp"
 #include "cppbox/parse.hpp"
+
+/**
+ * @brief Enum concept, not provided in c++20.
+ *
+ * @tparam T
+ */
+template<typename T>
+concept IsEnum = std::is_enum_v<T>;
 
 #define DEFINE_TO_STRING_FUNCTION_FOR_ENUM_IMPL_ADD_SWITCH_CASE_TO_STRING(Enum, x) \
     case (Enum::x):                                                                \
