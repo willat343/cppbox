@@ -16,10 +16,10 @@
 namespace cppbox {
 
 template<typename>
-inline constexpr bool always_false_v = false;
+constexpr inline bool always_false_v = false;
 
 template<typename>
-inline constexpr bool always_true_v = true;
+constexpr inline bool always_true_v = true;
 
 template<typename T, typename Enable = void>
 struct const_ref {
