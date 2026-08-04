@@ -6,12 +6,10 @@
 
 #include "cppbox/macro.hpp"
 
-// Implementation macro: Throw exception with message (note: do {} while (0) aids macro safety)
-#define THROW_INTERNAL(message)                                                                                    \
-    do {                                                                                                           \
-        throw std::runtime_error(                                                                                  \
-                std::string("[") + __FILE__ + ":" + std::to_string(__LINE__) + "|" + __func__ + "] " + (message)); \
-    } while (0)
+// Implementation macro: Throw exception with message
+#define THROW_INTERNAL(message) \
+    throw std::runtime_error(   \
+            std::string("[") + __FILE__ + ":" + std::to_string(__LINE__) + "|" + __func__ + "] " + (message))
 
 // Implementation macro: Conditionally throws exception without details
 #define THROW_IF_IMPL_1(condition)                                                \
