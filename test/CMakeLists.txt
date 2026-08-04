@@ -4,11 +4,16 @@ set(TESTS_NAME ${PROJECT_NAME}_tests)
 add_executable(${TESTS_NAME}
     src/constexpr_map.cpp
     src/map.cpp
+    src/time.cpp
+    src/time_interval.cpp
+    src/time_keeper.cpp
     src/tracking.cpp
+    src/tracking_deque.cpp
     src/tracking_events.cpp
     src/traits.cpp
     src/unordered_map.cpp
     src/unordered_set.cpp
+    src/wrapper.cpp
 )
 
 # Include Directories
