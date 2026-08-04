@@ -1,6 +1,7 @@
 #ifndef CPPBOX_IMPL_MONOTONIC_HPP
 #define CPPBOX_IMPL_MONOTONIC_HPP
 
+#include "cppbox/exceptions.hpp"
 #include "cppbox/monotonic.hpp"
 
 namespace cppbox {

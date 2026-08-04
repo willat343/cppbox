@@ -4,6 +4,7 @@
 #include <algorithm>
 #include <numeric>
 
+#include "cppbox/exceptions.hpp"
 #include "cppbox/tracking_deque.hpp"
 
 namespace cppbox {
@@ -176,8 +177,8 @@ void TrackingDeque<T>::pop_front() {
 
 template<typename T>
 inline auto TrackingDeque<T>::count_tracked() const -> size_type {
-    return std::accumulate(tracked_.cbegin(), tracked_.cend(), 0,
-            [this](const_reference element) { return count(element); });
+    return std::accumulate(tracked_.cbegin(), tracked_.cend(), size_type{0},
+            [this](size_type accumulated, const_reference element) { return accumulated + count(element); });
 }
 
 template<typename T>

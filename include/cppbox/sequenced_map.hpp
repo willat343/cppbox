@@ -1,6 +1,7 @@
 #ifndef CPPBOX_SEQUENCED_MAP_HPP
 #define CPPBOX_SEQUENCED_MAP_HPP
 
+#include <algorithm>
 #include <list>
 #include <unordered_map>
 

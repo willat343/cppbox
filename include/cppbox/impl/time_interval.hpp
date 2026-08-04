@@ -1,6 +1,9 @@
 #ifndef CPPBOX_IMPL_TIME_INTERVAL_HPP
 #define CPPBOX_IMPL_TIME_INTERVAL_HPP
 
+#include <algorithm>
+#include <utility>
+
 #include "cppbox/exceptions.hpp"
 #include "cppbox/time_interval.hpp"
 
@@ -72,7 +75,7 @@ inline TimeInterval<Time> intersection_of(const TimeInterval<Time>& lhs, const T
 
 template<IsTimePoint Time>
 inline bool is_overlapping(const TimeInterval<Time>& lhs, const TimeInterval<Time>& rhs) {
-    return lhs.end() >= rhs.start() || rhs.end() >= lhs.start();
+    return lhs.end() >= rhs.start() && rhs.end() >= lhs.start();
 }
 
 template<IsTimePoint Time>

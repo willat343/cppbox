@@ -2,11 +2,9 @@
 #define CPPBOX_IMPL_TIME_KEEPER_HPP
 
 #include <algorithm>
-#include <cmath>
 #include <iterator>
 #include <limits>
 #include <string>
-#include <utility>
 
 #include "cppbox/exceptions.hpp"
 #include "cppbox/time_keeper.hpp"
@@ -81,7 +79,7 @@ inline void OrderedTimeKeeper<Time_>::change_start_time(const Time time_) {
 
 template<IsTimePoint Time_>
 inline void OrderedTimeKeeper<Time_>::change_time(const int index, const Time time_) {
-    throw_if(index < 0 || index > size(),
+    throw_if(index < 0 || index >= size(),
             "Index " + std::to_string(index) + " out of bounds [0, " + std::to_string(size()) + ").");
     throw_if((index != 0 && time_ < time(index - 1)) || (index + 1 != size() && time_ > time(index + 1)),
             "Attempted to change time " + cppbox::to_string(time(index)) + " at index " + std::to_string(index) +
@@ -166,6 +164,7 @@ inline int OrderedTimeKeeper<Time_>::size() const {
 
 template<IsTimePoint Time_>
 inline auto OrderedTimeKeeper<Time_>::start() const -> Time {
+    throw_if(this->empty(), "Failed to compute start: no times exist");
     return times().front();
 }
 
@@ -201,8 +200,11 @@ inline auto UniformTimeKeeper<Time_>::end() const -> Time {
 
 template<IsTimePoint Time_>
 inline int UniformTimeKeeper<Time_>::find_index(const Time time_) const {
-    // Because integer division ignores the fractional part, we must conditionally subtract one for negative durations.
-    return (time_ - this->start()) / interval() - (time_ < this->start() ? 1 : 0);
+    // Because integer division truncates toward zero, we must conditionally subtract one when time_ precedes start()
+    // by a non-exact number of intervals.
+    const Duration duration_since_start = time_ - this->start();
+    return duration_since_start / interval() -
+           ((duration_since_start < Duration::zero() && duration_since_start % interval() != Duration::zero()) ? 1 : 0);
 }
 
 template<IsTimePoint Time_>
@@ -233,7 +235,7 @@ inline void UniformTimeKeeper<Time_>::require_time(const Time time_) {
 template<IsTimePoint Time_>
 inline void UniformTimeKeeper<Time_>::require_time_within(const Time time_) {
     throw_if(!this->has_time_within(time_),
-            "Required time " + cppbox::to_string(time_) + " does not exist not is between two times.");
+            "Required time " + cppbox::to_string(time_) + " does not exist nor is between two times.");
 }
 
 template<IsTimePoint Time_>

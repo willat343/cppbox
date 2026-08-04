@@ -4,7 +4,6 @@
 #include <array>
 #include <concepts>
 #include <ostream>
-#include <stdexcept>
 #include <string>
 #include <type_traits>
 

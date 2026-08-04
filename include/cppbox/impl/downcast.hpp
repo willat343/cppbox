@@ -1,8 +1,6 @@
 #ifndef CPPBOX_IMPL_DOWNCAST_HPP
 #define CPPBOX_IMPL_DOWNCAST_HPP
 
-#include <stdexcept>
-
 #include "cppbox/downcast.hpp"
 #include "cppbox/exceptions.hpp"
 

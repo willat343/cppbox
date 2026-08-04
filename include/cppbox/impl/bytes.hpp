@@ -3,7 +3,6 @@
 
 #include <cassert>
 #include <cstring>
-#include <stdexcept>
 #include <utility>
 
 #include "cppbox/bytes.hpp"

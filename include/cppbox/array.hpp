@@ -6,7 +6,7 @@
 namespace cppbox {
 
 template<class T, std::size_t N>
-constexpr bool contains(const std::array<T, N>& array);
+constexpr bool contains(const std::array<T, N>& array, const T& element);
 
 template<class T, std::size_t... Sizes>
 constexpr std::array<T, (Sizes + ...)> merge(const std::array<T, Sizes>&... array);

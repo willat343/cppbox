@@ -15,7 +15,7 @@ std::set<Key, Compare> keys(const std::map<Key, T, Compare, Allocator>& map) {
 }
 
 template<class Key, class T, class Compare, class Allocator>
-inline std::string to_string(const std::map<Key, T, Compare, Allocator>& map) {
+std::string to_string(const std::map<Key, T, Compare, Allocator>& map) {
     std::stringstream ss;
     for (const auto& [k, v] : map) {
         ss << k << ": " << v << "\n";

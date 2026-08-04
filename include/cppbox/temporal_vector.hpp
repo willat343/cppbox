@@ -2,7 +2,6 @@
 #define CPPBOX_TEMPORAL_VECTOR_HPP
 
 #include <deque>
-#include <type_traits>
 
 #include "cppbox/time.hpp"
 #include "cppbox/time_keeper.hpp"

@@ -2,6 +2,7 @@
 #define CPPBOX_IMPL_PARSE_HPP
 
 #include <algorithm>
+#include <cctype>
 
 #include "cppbox/parse.hpp"
 

@@ -1,6 +1,8 @@
 #ifndef CPPBOX_IMPL_TIME_HPP
 #define CPPBOX_IMPL_TIME_HPP
 
+#include <algorithm>
+#include <cstdlib>
 #include <iomanip>
 #include <sstream>
 
@@ -20,7 +22,7 @@ constexpr inline Duration to_duration(const Scalar seconds) {
 
 template<typename Scalar, class TimeOrDuration>
     requires(std::is_arithmetic_v<TimeOrDuration> || is_time_point_or_duration_v<TimeOrDuration>)
-constexpr Scalar to_nsec(const TimeOrDuration& time_or_duration) {
+constexpr inline Scalar to_nsec(const TimeOrDuration& time_or_duration) {
     if constexpr (std::is_arithmetic_v<TimeOrDuration>) {
         if constexpr (std::is_unsigned_v<Scalar>) {
             throw_if(time_or_duration < static_cast<TimeOrDuration>(0),
@@ -72,9 +74,11 @@ inline std::string to_string(const TimeOrDuration& time_or_duration) {
     if constexpr (is_time_point_v<TimeOrDuration>) {
         return to_string(time_or_duration.time_since_epoch());
     } else if constexpr (is_duration_v<TimeOrDuration>) {
+        const bool negative = time_or_duration < TimeOrDuration::zero();
+        const TimeOrDuration magnitude = negative ? -time_or_duration : time_or_duration;
         std::stringstream ss;
-        ss << time_or_duration / std::chrono::seconds(1) << "." << std::setw(9) << std::setfill('0')
-           << std::abs((time_or_duration % std::chrono::seconds(1)) / std::chrono::nanoseconds(1));
+        ss << (negative ? "-" : "") << magnitude / std::chrono::seconds(1) << "." << std::setw(9) << std::setfill('0')
+           << (magnitude % std::chrono::seconds(1)) / std::chrono::nanoseconds(1);
         return ss.str();
     }
 }

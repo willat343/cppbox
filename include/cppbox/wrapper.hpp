@@ -1,7 +1,6 @@
 #ifndef CPPBOX_WRAPPER_HPP
 #define CPPBOX_WRAPPER_HPP
 
-#include <concepts>
 #include <type_traits>
 
 namespace cppbox {
@@ -111,7 +110,7 @@ template<typename T>
 struct is_const_wrapper : std::false_type {};
 
 template<typename T>
-struct is_const_wrapper<Wrapper<T>> : std::true_type {};
+struct is_const_wrapper<ConstWrapper<T>> : std::true_type {};
 
 template<typename T>
 concept IsConstWrapper = is_const_wrapper<std::remove_reference_t<T>>::value;
