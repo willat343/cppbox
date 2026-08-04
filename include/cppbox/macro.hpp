@@ -4,7 +4,7 @@
 // Add a comma to the end
 #define ADD_COMMA(x) x,
 
-// FE (FOR_EACH) macros to handle up to 19 arguments
+// FE (FOR_EACH) macros to handle up to 99 arguments
 #define FE0(MACRO)
 #define FE1(MACRO, X) MACRO(X)
 #define FE2(MACRO, X, ...) MACRO(X) FE1(MACRO, __VA_ARGS__)
@@ -127,7 +127,7 @@
             FE18, FE17, FE16, FE15, FE14, FE13, FE12, FE11, FE10, FE9, FE8, FE7, FE6, FE5, FE4, FE3, FE2, FE1,     \
             FE0)(MACRO, ##__VA_ARGS__)
 
-// FEI (FOR_EACH_I) macros to handle up to 19 arguments
+// FEI (FOR_EACH_I) macros to handle up to 99 arguments
 #define FEI0(MACRO, DATA)
 #define FEI1(MACRO, DATA, X) MACRO(DATA, X)
 #define FEI2(MACRO, DATA, X, ...) MACRO(DATA, X) FEI1(MACRO, DATA, __VA_ARGS__)
@@ -265,7 +265,7 @@
     N
 
 /**
- * @brief The `VA_NARGS` returns the number of arguments when in range 0 to 19.
+ * @brief The `VA_NARGS` returns the number of arguments when in range 0 to 99.
  *
  */
 #define VA_NARGS(...)                                                                                                \

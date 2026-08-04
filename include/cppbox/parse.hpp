@@ -8,7 +8,7 @@
 namespace cppbox {
 
 /**
- * @brief Join strings into a single string separater by a delimiter.
+ * @brief Join strings into a single string separated by a delimiter.
  *
  * @param strings
  * @param delimiter
@@ -35,7 +35,7 @@ template<class T>
 std::size_t max_size_key(const std::map<std::string, T>& strings);
 
 /**
- * @brief Split a string by a deliminator, returning a vector of substrings. If the input is empty, an empty vector is
+ * @brief Split a string by a delimiter, returning a vector of substrings. If the input is empty, an empty vector is
  * returned.
  *
  * @param input

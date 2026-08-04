@@ -71,7 +71,7 @@ public:
      * @param time query time
      * @param update_times time bounds for element, such that the start and end times (may be equal) indicate the known
      * time interval when the element equals its returned value, noting that `time` may be within the interval or after
-     * the interval (i.e. a tracking transition occured between end time and the next time or the end time is the last
+     * the interval (i.e. a tracking transition occurred between end time and the next time or the end time is the last
      * known time)
      * @return const Element&
      */
@@ -101,7 +101,6 @@ public:
     /**
      * @brief Check if the element changed at the last update (including if the last update was the first).
      *
-     * @param time
      * @return true if element changed at last update (including first element)
      * @return false otherwise
      */
@@ -266,7 +265,7 @@ public:
     /**
      * @brief Get number of trackings.
      *
-     * @return std::size_
+     * @return std::size_t
      */
     std::size_t size() const;
 

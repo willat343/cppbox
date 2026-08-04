@@ -87,7 +87,7 @@ public:
     /**
      * @brief Pointer-like access, e.g. `(*wrapper)->method(...)`.
      *
-     * @return T&
+     * @return const T&
      */
     const T& operator*() const;
 

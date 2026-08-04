@@ -3,12 +3,13 @@
 
 #include <chrono>
 #include <string>
+#include <type_traits>
 #include <vector>
 
 namespace cppbox {
 
 /**
- * @brief False version of type trait to check if type is a `std::chrono::Duration<Rep, Period>`.
+ * @brief False version of type trait to check if type is a `std::chrono::duration<Rep, Period>`.
  *
  * @tparam T type
  */
@@ -16,7 +17,7 @@ template<typename T>
 struct is_duration : std::false_type {};
 
 /**
- * @brief True version of type trait to check if type is a `std::chrono::Duration<Rep, Period>`.
+ * @brief True version of type trait to check if type is a `std::chrono::duration<Rep, Period>`.
  *
  * @tparam Rep
  * @tparam Period
@@ -25,7 +26,7 @@ template<class Rep, class Period>
 struct is_duration<std::chrono::duration<Rep, Period>> : std::true_type {};
 
 /**
- * @brief Value for type trait to check if type is a `std::chrono::Duration<Rep, Period>`.
+ * @brief Value for type trait to check if type is a `std::chrono::duration<Rep, Period>`.
  *
  * @tparam T type
  */
@@ -92,7 +93,7 @@ concept IsTimePointOrDuration = is_time_point_or_duration_v<T>;
 /**
  * @brief Convert seconds to duration.
  *
- * @tparam Duration type satisfying `std::is_arithemetic_v` or `is_duration_v`
+ * @tparam Duration type satisfying `std::is_arithmetic_v` or `is_duration_v`
  * @tparam Scalar
  * @param seconds
  * @return Duration
@@ -106,7 +107,7 @@ constexpr Duration to_duration(const Scalar seconds);
  *
  * @tparam Scalar return type, default allows use of function without specifying template parameters. If unsigned, then
  * an exception is thrown if the input is negative.
- * @tparam TimeOrDuration type satisfying `std::is_arithemetic_v`, `is_time_point_or_duration_v`
+ * @tparam TimeOrDuration type satisfying `std::is_arithmetic_v`, `is_time_point_or_duration_v`
  * @param time_or_duration time or duration (if arithmetic, assumed to be nanoseconds)
  * @return Scalar nanoseconds
  */
@@ -118,7 +119,7 @@ constexpr Scalar to_nsec(const TimeOrDuration& time_or_duration);
  * @brief Convert time (since clock epoch) or duration to scalar seconds. Scalar times are assumed to be in seconds.
  *
  * @tparam Scalar return type, default allows use of function without specifying template parameters
- * @tparam TimeOrDuration type satisfying `std::is_arithemetic_v`, `is_time_point_or_duration_v`
+ * @tparam TimeOrDuration type satisfying `std::is_arithmetic_v`, `is_time_point_or_duration_v`
  * @param time_or_duration time or duration (if arithmetic, assumed to be seconds)
  * @return Scalar
  */
@@ -151,7 +152,7 @@ std::string to_string(const TimeOrDuration& time_or_duration);
 /**
  * @brief Convert seconds to time (since clock epoch).
  *
- * @tparam Time type satisfying `std::is_arithemetic_v` or `is_time_point_v`
+ * @tparam Time type satisfying `std::is_arithmetic_v` or `is_time_point_v`
  * @tparam Scalar
  * @param seconds
  * @return Time

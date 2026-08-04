@@ -29,7 +29,7 @@ constexpr std::uint32_t fnv1a_32(const std::string_view string);
 constexpr std::uint64_t fnv1a_64(const std::string_view string);
 
 /**
- * @brief Primate template for constexpr hashes.
+ * @brief Primary template for constexpr hashes.
  *
  * @tparam Key
  */
@@ -58,8 +58,6 @@ struct ConstexprHash<Key> {
 
 /**
  * @brief Template specialisation for `std::string_view` strings.
- *
- * @tparam
  */
 template<>
 struct ConstexprHash<std::string_view> {
@@ -68,8 +66,6 @@ struct ConstexprHash<std::string_view> {
 
 /**
  * @brief Template specialisation for `const char*` strings.
- *
- * @tparam
  */
 template<>
 struct ConstexprHash<const char*> {

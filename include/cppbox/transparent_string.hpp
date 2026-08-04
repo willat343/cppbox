@@ -28,7 +28,7 @@ struct TransparentStringEq {
  * @brief `TransparentStringUnorderedMap<T>` is like `std::unordered_map<std::string, T>` but allows for the lookup of
  * types like `std::string_view` and `const char*` with zero allocations or temporaries being created.
  *
- * Note: heterogenous key lookup for const containers is only supported from C++23 onwards
+ * Note: heterogeneous key lookup for const containers is only supported from C++23 onwards.
  *
  * @tparam T
  */
@@ -39,7 +39,7 @@ using TransparentStringUnorderedMap = std::unordered_map<std::string, T, Transpa
  * @brief `TransparentStringUnorderedSet` is like `std::unordered_set<std::string>` but allows for the lookup of types
  * like `std::string_view` and `const char*` with zero allocations or temporaries being created.
  *
- * Note: heterogenous key lookup for const containers is only supported from C++23 onwards
+ * Note: heterogeneous key lookup for const containers is only supported from C++23 onwards.
  *
  */
 using TransparentStringUnorderedSet = std::unordered_set<std::string, TransparentStringHash, TransparentStringEq>;

@@ -85,7 +85,7 @@ private:
      * when stateless and prevent unnecessary memory padding (also works when stateful).
      *
      * Developer Note: [[no_unique_address]] seems to cause internal compiler error issues with the g++10 compiler in
-     * some cases, so can be re-enabled when a higher compiler is enforced. This tag is a relatively minor optimization.
+     * some cases, so can be re-enabled when a higher compiler is enforced. This tag is a relatively minor optimisation.
      */
     /*[[no_unique_address]]*/ Hash hash_function_;
 };

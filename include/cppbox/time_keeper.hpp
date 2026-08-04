@@ -157,7 +157,7 @@ public:
     virtual void require_time(const Time time_) = 0;
 
     /**
-     * @brief Ensure that `time_` exists  or is between two times. If the `time_` does not exist, add it if possible and
+     * @brief Ensure that `time_` exists or is between two times. If the `time_` does not exist, add it if possible and
      * otherwise throw an exception.
      *
      * @param time_

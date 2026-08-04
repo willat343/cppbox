@@ -135,7 +135,7 @@ public:
     void track(const_reference element);
 
     /**
-     * @brief Remove `element` as an object to track. Does nothing if `element is not tracked.
+     * @brief Remove `element` as an object to track. Does nothing if `element` is not tracked.
      *
      * @param element
      */

@@ -1,14 +1,15 @@
 #ifndef CPPBOX_INPUT_HPP
 #define CPPBOX_INPUT_HPP
 
-#include <iostream>
+#include <optional>
+#include <string>
 
 namespace cppbox {
 
 /**
  * @brief Wait for and return input entered (ENTER pressed).
  *
- * @return std::optional<std::string>, std::nullopt if EOF or error occured
+ * @return std::optional<std::string>, std::nullopt if EOF or error occurred
  */
 std::optional<std::string> get_input();
 
@@ -16,7 +17,7 @@ std::optional<std::string> get_input();
  * @brief Wait for a specific string to be entered (ENTER pressed), generalising wait for key.
  *
  * @param string
- * @return true if string was received, false if EOF or error occured
+ * @return true if string was received, false if EOF or error occurred
  */
 bool wait_for_string(const std::string& string);
 
