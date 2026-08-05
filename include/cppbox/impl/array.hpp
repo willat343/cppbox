@@ -1,6 +1,8 @@
 #ifndef CPPBOX_IMPL_ARRAY_HPP
 #define CPPBOX_IMPL_ARRAY_HPP
 
+#include <algorithm>
+
 #include "cppbox/array.hpp"
 
 namespace cppbox {

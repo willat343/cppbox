@@ -10,3 +10,8 @@ TEST(map, keys) {
         EXPECT_TRUE(set.contains(key));
     }
 }
+
+TEST(map, to_string) {
+    const std::map<std::string, int> map = {{"one", 1}, {"two", 2}};
+    EXPECT_EQ(cppbox::to_string(map), "one: 1\ntwo: 2\n");
+}

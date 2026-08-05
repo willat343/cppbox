@@ -2,8 +2,19 @@ set(TESTS_NAME ${PROJECT_NAME}_tests)
 
 # Build Example
 add_executable(${TESTS_NAME}
+    src/array.cpp
+    src/bytes.cpp
+    src/constexpr_hash.cpp
     src/constexpr_map.cpp
+    src/downcast.cpp
+    src/enum.cpp
+    src/exceptions.cpp
     src/map.cpp
+    src/monotonic.cpp
+    src/parse.cpp
+    src/sequenced_map.cpp
+    src/temporal_vector.cpp
+    src/thread.cpp
     src/time.cpp
     src/time_interval.cpp
     src/time_keeper.cpp
@@ -11,6 +22,7 @@ add_executable(${TESTS_NAME}
     src/tracking_deque.cpp
     src/tracking_events.cpp
     src/traits.cpp
+    src/transparent_string.cpp
     src/unordered_map.cpp
     src/unordered_set.cpp
     src/wrapper.cpp

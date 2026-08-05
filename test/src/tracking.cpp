@@ -179,3 +179,90 @@ TEST(binary_multi_tracking, updates) {
     EXPECT_TRUE(multi_tracking.is_synchronised_to(start + Duration(2)));
     EXPECT_EQ(multi_tracking.synchronisation_time(), start + Duration(2));
 }
+
+TEST(binary_tracking, changed_last_and_is_updated_once) {
+    using Time = std::chrono::steady_clock::time_point;
+    using Duration = Time::duration;
+    cppbox::BinaryTracking<Time> tracking;
+    Time start{Duration(0)};
+    tracking.update(start, true);
+    EXPECT_TRUE(tracking.is_updated_once());
+    EXPECT_TRUE(tracking.changed_last());
+    tracking.update(start + Duration(1), true);
+    EXPECT_FALSE(tracking.is_updated_once());
+    EXPECT_FALSE(tracking.changed_last());
+    tracking.update(start + Duration(2), false);
+    EXPECT_TRUE(tracking.changed_last());
+    tracking.update(start + Duration(3), false);
+    EXPECT_FALSE(tracking.changed_last());
+}
+
+TEST(binary_tracking, first_and_previous_and_next) {
+    using Time = std::chrono::steady_clock::time_point;
+    using Duration = Time::duration;
+    cppbox::BinaryTracking<Time> tracking;
+    Time start{Duration(0)};
+    EXPECT_ANY_THROW(tracking.first());
+    EXPECT_ANY_THROW(tracking.first_time());
+    EXPECT_ANY_THROW(tracking.previous());
+    EXPECT_ANY_THROW(tracking.previous_time());
+
+    tracking.update(start, true);
+    EXPECT_EQ(tracking.first(), true);
+    EXPECT_EQ(tracking.first_time(), start);
+    Time first_update_time;
+    EXPECT_EQ(tracking.first(first_update_time), true);
+    EXPECT_EQ(first_update_time, start);
+    EXPECT_ANY_THROW(tracking.previous());
+    EXPECT_ANY_THROW(tracking.previous_time());
+
+    tracking.update(start + Duration(2), false);
+    EXPECT_EQ(tracking.first(), true);
+    EXPECT_EQ(tracking.first_time(), start);
+    EXPECT_EQ(tracking.previous(), true);
+    EXPECT_EQ(tracking.previous_time(), start);
+
+    EXPECT_EQ(tracking.next(start), false);
+    EXPECT_EQ(tracking.next_time(start), start + Duration(2));
+    Time next_update_time;
+    EXPECT_EQ(tracking.next(start, next_update_time), false);
+    EXPECT_EQ(next_update_time, start + Duration(2));
+}
+
+TEST(binary_tracking, last_or_default) {
+    using Time = std::chrono::steady_clock::time_point;
+    using Duration = Time::duration;
+    cppbox::BinaryTracking<Time> tracking;
+    EXPECT_EQ(tracking.last_or(true), true);
+    EXPECT_EQ(tracking.last_or(false), false);
+    Time start{Duration(0)};
+    tracking.update(start, false);
+    EXPECT_EQ(tracking.last_or(true), false);
+}
+
+TEST(binary_multi_tracking, tracking_accessors_and_last_synchronised) {
+    using Time = std::chrono::steady_clock::time_point;
+    using Duration = Time::duration;
+    cppbox::BinaryMultiTracking<Time> multi_tracking;
+    Time start{Duration(0)};
+    EXPECT_ANY_THROW(multi_tracking.last_synchronised());
+    multi_tracking.update(start, {{"a", true}, {"b", false}});
+    EXPECT_EQ(multi_tracking.tracking("a").last(), true);
+    EXPECT_EQ(multi_tracking.trackings().size(), 2u);
+    const auto last_synchronised = multi_tracking.last_synchronised();
+    EXPECT_EQ(last_synchronised.at("a"), true);
+    EXPECT_EQ(last_synchronised.at("b"), false);
+}
+
+TEST(binary_multi_tracking, update_all_with_same_element) {
+    using Time = std::chrono::steady_clock::time_point;
+    using Duration = Time::duration;
+    cppbox::BinaryMultiTracking<Time> multi_tracking;
+    Time start{Duration(0)};
+    multi_tracking.update(start, {{"a", true}, {"b", false}});
+    multi_tracking.update(start + Duration(1), true);
+    EXPECT_TRUE(multi_tracking.is_synchronised());
+    EXPECT_EQ(multi_tracking.tracking("a").last(), true);
+    EXPECT_EQ(multi_tracking.tracking("b").last(), true);
+    EXPECT_EQ(multi_tracking.synchronisation_time(), start + Duration(1));
+}

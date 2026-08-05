@@ -3,6 +3,85 @@
 #include <gtest/gtest.h>
 
 #include <chrono>
+#include <sstream>
+
+TEST(time_interval, default_constructor) {
+    using Time = std::chrono::steady_clock::time_point;
+    const cppbox::TimeInterval<Time> interval;
+    EXPECT_EQ(interval.start(), Time());
+    EXPECT_EQ(interval.end(), Time::max());
+}
+
+TEST(time_interval, invalid_bounds_throw) {
+    using Time = std::chrono::steady_clock::time_point;
+    using Duration = Time::duration;
+    Time start{Duration(5)};
+    EXPECT_ANY_THROW(cppbox::TimeInterval<Time>(start, start - Duration(1)));
+}
+
+TEST(time_interval, contains_time) {
+    using Time = std::chrono::steady_clock::time_point;
+    using Duration = Time::duration;
+    Time start{Duration(0)};
+    const cppbox::TimeInterval<Time> interval(start, start + Duration(4));
+    EXPECT_TRUE(interval.contains(start));
+    EXPECT_TRUE(interval.contains(start + Duration(2)));
+    EXPECT_TRUE(interval.contains(start + Duration(4)));
+    EXPECT_FALSE(interval.contains(start - Duration(1)));
+    EXPECT_FALSE(interval.contains(start + Duration(5)));
+}
+
+TEST(time_interval, contains_and_within_interval) {
+    using Time = std::chrono::steady_clock::time_point;
+    using Duration = Time::duration;
+    Time start{Duration(0)};
+    const cppbox::TimeInterval<Time> outer(start, start + Duration(10));
+    const cppbox::TimeInterval<Time> inner(start + Duration(2), start + Duration(4));
+    EXPECT_TRUE(outer.contains(inner));
+    EXPECT_TRUE(inner.within(outer));
+    EXPECT_FALSE(inner.contains(outer));
+    EXPECT_FALSE(outer.within(inner));
+}
+
+TEST(time_interval, span) {
+    using Time = std::chrono::steady_clock::time_point;
+    using Duration = Time::duration;
+    Time start{Duration(0)};
+    const cppbox::TimeInterval<Time> interval(start, start + Duration(4));
+    EXPECT_EQ(interval.span(), Duration(4));
+}
+
+TEST(time_interval, mutable_accessors) {
+    using Time = std::chrono::steady_clock::time_point;
+    using Duration = Time::duration;
+    Time start{Duration(0)};
+    cppbox::TimeInterval<Time> interval(start, start + Duration(4));
+    interval.start() = start + Duration(1);
+    interval.end() = start + Duration(5);
+    EXPECT_EQ(interval.start(), start + Duration(1));
+    EXPECT_EQ(interval.end(), start + Duration(5));
+}
+
+TEST(time_interval, to_string_and_stream) {
+    using Time = std::chrono::time_point<std::chrono::steady_clock, std::chrono::nanoseconds>;
+    const Time start{std::chrono::nanoseconds(0)};
+    const cppbox::TimeInterval<Time> interval(start, start + std::chrono::seconds(1));
+    EXPECT_EQ(interval.to_string(), "[0.000000000, 1.000000000]");
+    std::ostringstream ss;
+    ss << interval;
+    EXPECT_EQ(ss.str(), interval.to_string());
+}
+
+TEST(time_interval, equality) {
+    using Time = std::chrono::steady_clock::time_point;
+    using Duration = Time::duration;
+    Time start{Duration(0)};
+    const cppbox::TimeInterval<Time> a(start, start + Duration(4));
+    const cppbox::TimeInterval<Time> b(start, start + Duration(4));
+    const cppbox::TimeInterval<Time> c(start, start + Duration(5));
+    EXPECT_EQ(a, b);
+    EXPECT_NE(a, c);
+}
 
 TEST(time_interval, is_overlapping) {
     using Time = std::chrono::steady_clock::time_point;
