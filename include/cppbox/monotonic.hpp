@@ -10,8 +10,6 @@ public:
     using reference = T&;
     using const_reference = const T&;
 
-    explicit MonotonicIncreasing() = default;
-
     explicit MonotonicIncreasing(const_reference value_);
 
     void try_update(const_reference new_value);
