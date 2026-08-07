@@ -4,6 +4,8 @@
 #include <algorithm>
 #include <cctype>
 #include <charconv>
+#include <sstream>
+#include <type_traits>
 
 #include "cppbox/parse.hpp"
 
@@ -19,9 +21,15 @@ inline std::size_t max_size_key(const std::map<std::string, T>& map) {
 template<class T>
 inline std::optional<T> to_number(const std::string& string) {
     T number{};
-    const char* const end = string.data() + string.size();
-    const std::from_chars_result result = std::from_chars(string.data(), end, number);
-    return result.ec == std::errc{} && result.ptr == end ? std::optional<T>{number} : std::nullopt;
+    if constexpr (std::is_integral_v<T>) {
+        const char* const end = string.data() + string.size();
+        const std::from_chars_result result = std::from_chars(string.data(), end, number);
+        return result.ec == std::errc{} && result.ptr == end ? std::optional<T>{number} : std::nullopt;
+    } else {  // std::from_chars for floating point types requires GCC 11 or later
+        std::istringstream ss(string);
+        ss >> number;
+        return !ss.fail() && ss.eof() ? std::optional<T>{number} : std::nullopt;
+    }
 }
 
 inline std::string tolower(const std::string& input) {

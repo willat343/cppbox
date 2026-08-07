@@ -36,6 +36,8 @@ TEST(parse, to_number) {
     EXPECT_FALSE(cppbox::to_number<std::size_t>("12a").has_value());
     EXPECT_FALSE(cppbox::to_number<std::size_t>("a12").has_value());
     EXPECT_FALSE(cppbox::to_number<std::size_t>("1 2").has_value());
+    EXPECT_FALSE(cppbox::to_number<double>("").has_value());
+    EXPECT_FALSE(cppbox::to_number<double>("1.5a").has_value());
 }
 
 TEST(parse, tolower) {

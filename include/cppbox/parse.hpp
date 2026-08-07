@@ -46,7 +46,8 @@ std::size_t max_size_key(const std::map<std::string, T>& strings);
 std::vector<std::string> split_by_char(const std::string& input, const char delim);
 
 /**
- * @brief Convert a string to a number, where the entire string must form the number.
+ * @brief Convert a string to a number, where the entire string must form the number. Note that floating point types
+ * are extracted with a stream, so they additionally accept leading whitespace and a leading '+'.
  *
  * @tparam T arithmetic type
  * @param string
