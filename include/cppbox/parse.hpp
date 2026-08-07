@@ -2,6 +2,7 @@
 #define CPPBOX_PARSE_HPP
 
 #include <map>
+#include <optional>
 #include <string>
 #include <vector>
 
@@ -43,6 +44,16 @@ std::size_t max_size_key(const std::map<std::string, T>& strings);
  * @return std::vector<std::string>
  */
 std::vector<std::string> split_by_char(const std::string& input, const char delim);
+
+/**
+ * @brief Convert a string to a number, where the entire string must form the number.
+ *
+ * @tparam T arithmetic type
+ * @param string
+ * @return std::optional<T>, std::nullopt if the string is not entirely a valid number of type T
+ */
+template<class T>
+std::optional<T> to_number(const std::string& string);
 
 /**
  * @brief Convert string to lowercase.
@@ -89,6 +100,29 @@ std::string toupper(std::string&& string);
  * @param string
  */
 void toupper(std::string& string);
+
+/**
+ * @brief Remove leading and trailing whitespace from a string.
+ *
+ * @param string
+ * @return std::string
+ */
+std::string trim(const std::string& string);
+
+/**
+ * @brief Remove leading and trailing whitespace from a string (temporary).
+ *
+ * @param string
+ * @return std::string
+ */
+std::string trim(std::string&& string);
+
+/**
+ * @brief Remove leading and trailing whitespace from a string in-place.
+ *
+ * @param string
+ */
+void trim(std::string& string);
 
 }
 

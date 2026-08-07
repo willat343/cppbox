@@ -3,6 +3,7 @@
 
 #include <algorithm>
 #include <cctype>
+#include <charconv>
 
 #include "cppbox/parse.hpp"
 
@@ -13,6 +14,14 @@ inline std::size_t max_size_key(const std::map<std::string, T>& map) {
     return map.empty() ? 0 : std::max_element(map.cbegin(), map.cend(), [](const auto& pair1, const auto& pair2) {
         return pair1.first.size() < pair2.first.size();
     })->first.size();
+}
+
+template<class T>
+inline std::optional<T> to_number(const std::string& string) {
+    T number{};
+    const char* const end = string.data() + string.size();
+    const std::from_chars_result result = std::from_chars(string.data(), end, number);
+    return result.ec == std::errc{} && result.ptr == end ? std::optional<T>{number} : std::nullopt;
 }
 
 inline std::string tolower(const std::string& input) {

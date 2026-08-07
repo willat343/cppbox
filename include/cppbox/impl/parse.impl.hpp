@@ -2,6 +2,7 @@
 #define CPPBOX_IMPL_PARSE_IMPL_HPP
 
 #include <algorithm>
+#include <cctype>
 #include <numeric>
 #include <sstream>
 
@@ -37,6 +38,23 @@ CPPBOX_INLINE std::vector<std::string> split_by_char(const std::string& input, c
         }
     }
     return output;
+}
+
+CPPBOX_INLINE std::string trim(const std::string& string) {
+    std::string output = string;
+    trim(output);
+    return output;
+}
+
+CPPBOX_INLINE std::string trim(std::string&& string) {
+    trim(string);
+    return std::move(string);
+}
+
+CPPBOX_INLINE void trim(std::string& string) {
+    const auto is_not_space = [](const unsigned char character) { return !std::isspace(character); };
+    string.erase(string.begin(), std::find_if(string.begin(), string.end(), is_not_space));
+    string.erase(std::find_if(string.rbegin(), string.rend(), is_not_space).base(), string.end());
 }
 
 }
