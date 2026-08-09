@@ -31,6 +31,65 @@ TEST(time_interval, contains_time) {
     EXPECT_FALSE(interval.contains(start + Duration(5)));
 }
 
+TEST(time_interval, contains_time_open) {
+    using Time = std::chrono::steady_clock::time_point;
+    using Duration = Time::duration;
+    Time start{Duration(0)};
+    const cppbox::TimeInterval<Time> interval(start, start + Duration(4));
+    EXPECT_FALSE(interval.contains_open(start));
+    EXPECT_TRUE(interval.contains_open(start + Duration(2)));
+    EXPECT_FALSE(interval.contains_open(start + Duration(4)));
+    EXPECT_FALSE(interval.contains_open(start - Duration(1)));
+    EXPECT_FALSE(interval.contains_open(start + Duration(5)));
+}
+
+TEST(time_interval, contains_time_left_open) {
+    using Time = std::chrono::steady_clock::time_point;
+    using Duration = Time::duration;
+    Time start{Duration(0)};
+    const cppbox::TimeInterval<Time> interval(start, start + Duration(4));
+    EXPECT_FALSE(interval.contains_left_open(start));
+    EXPECT_TRUE(interval.contains_left_open(start + Duration(2)));
+    EXPECT_TRUE(interval.contains_left_open(start + Duration(4)));
+    EXPECT_FALSE(interval.contains_left_open(start - Duration(1)));
+    EXPECT_FALSE(interval.contains_left_open(start + Duration(5)));
+}
+
+TEST(time_interval, contains_time_right_open) {
+    using Time = std::chrono::steady_clock::time_point;
+    using Duration = Time::duration;
+    Time start{Duration(0)};
+    const cppbox::TimeInterval<Time> interval(start, start + Duration(4));
+    EXPECT_TRUE(interval.contains_right_open(start));
+    EXPECT_TRUE(interval.contains_right_open(start + Duration(2)));
+    EXPECT_FALSE(interval.contains_right_open(start + Duration(4)));
+    EXPECT_FALSE(interval.contains_right_open(start - Duration(1)));
+    EXPECT_FALSE(interval.contains_right_open(start + Duration(5)));
+}
+
+TEST(time_interval, adjacent_intervals_share_bound_exactly_once) {
+    using Time = std::chrono::steady_clock::time_point;
+    using Duration = Time::duration;
+    Time start{Duration(0)};
+    const cppbox::TimeInterval<Time> first(start, start + Duration(4));
+    const cppbox::TimeInterval<Time> second(start + Duration(4), start + Duration(8));
+    const Time shared = start + Duration(4);
+    EXPECT_TRUE(first.contains(shared) && second.contains(shared));
+    EXPECT_NE(first.contains_right_open(shared), second.contains_right_open(shared));
+    EXPECT_NE(first.contains_left_open(shared), second.contains_left_open(shared));
+}
+
+TEST(time_interval, empty_interval) {
+    using Time = std::chrono::steady_clock::time_point;
+    using Duration = Time::duration;
+    Time start{Duration(3)};
+    const cppbox::TimeInterval<Time> interval(start, start);
+    EXPECT_TRUE(interval.contains(start));
+    EXPECT_FALSE(interval.contains_open(start));
+    EXPECT_FALSE(interval.contains_left_open(start));
+    EXPECT_FALSE(interval.contains_right_open(start));
+}
+
 TEST(time_interval, contains_and_within_interval) {
     using Time = std::chrono::steady_clock::time_point;
     using Duration = Time::duration;

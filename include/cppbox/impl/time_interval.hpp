@@ -28,6 +28,21 @@ inline bool TimeInterval<Time_>::contains(const TimeInterval interval) const {
 }
 
 template<IsTimePoint Time_>
+inline bool TimeInterval<Time_>::contains_open(const Time time) const {
+    return time > start() && time < end();
+}
+
+template<IsTimePoint Time_>
+inline bool TimeInterval<Time_>::contains_left_open(const Time time) const {
+    return time > start() && time <= end();
+}
+
+template<IsTimePoint Time_>
+inline bool TimeInterval<Time_>::contains_right_open(const Time time) const {
+    return time >= start() && time < end();
+}
+
+template<IsTimePoint Time_>
 inline auto TimeInterval<Time_>::end() const -> const Time& {
     return end_;
 }

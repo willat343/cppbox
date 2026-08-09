@@ -18,9 +18,50 @@ public:
 
     explicit TimeInterval(const Time& start_, const Time& end_);
 
+    /**
+     * @brief Check if the closed interval \f$[start, end]\f$ contains `time`.
+     *
+     * @param time
+     * @return true
+     * @return false
+     */
     bool contains(const Time time) const;
 
+    /**
+     * @brief Check if the closed interval \f$[start, end]\f$ contains all of `interval`.
+     *
+     * @param interval
+     * @return true
+     * @return false
+     */
     bool contains(const TimeInterval interval) const;
+
+    /**
+     * @brief Check if the open interval \f$(start, end)\f$ contains `time`, excluding both bounds.
+     *
+     * @param time
+     * @return true
+     * @return false
+     */
+    bool contains_open(const Time time) const;
+
+    /**
+     * @brief Check if the left-open interval \f$(start, end]\f$ contains `time`, excluding the start bound.
+     *
+     * @param time
+     * @return true
+     * @return false
+     */
+    bool contains_left_open(const Time time) const;
+
+    /**
+     * @brief Check if the right-open interval \f$[start, end)\f$ contains `time`, excluding the end bound.
+     *
+     * @param time
+     * @return true
+     * @return false
+     */
+    bool contains_right_open(const Time time) const;
 
     const Time& end() const;
 
