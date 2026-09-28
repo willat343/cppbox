@@ -16,6 +16,7 @@ add_executable(${TESTS_NAME}
     src/temporal_vector.cpp
     src/thread.cpp
     src/time.cpp
+    src/time_correction.cpp
     src/time_interval.cpp
     src/time_keeper.cpp
     src/tracking.cpp
