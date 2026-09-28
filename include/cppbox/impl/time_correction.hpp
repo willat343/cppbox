@@ -7,6 +7,9 @@
 namespace cppbox {
 
 template<IsTimePoint Time_>
+inline TimeCorrection<Time_>::TimeCorrection() : TimeCorrection(1.0, Time()) {}
+
+template<IsTimePoint Time_>
 inline TimeCorrection<Time_>::TimeCorrection(const double rate_, const Time& origin_) : rate_(rate_), origin_(origin_) {
     throw_if(rate_ <= 0.0, "Time correction rate must be positive for corrected times to strictly increase.");
 }

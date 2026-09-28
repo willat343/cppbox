@@ -6,6 +6,12 @@
 
 using Time = std::chrono::steady_clock::time_point;
 
+TEST(time_correction, default_is_identity) {
+    const cppbox::TimeCorrection<Time> correction;
+    const Time time{std::chrono::nanoseconds(1234567890123)};
+    EXPECT_EQ(correction.apply(time), time);
+}
+
 TEST(time_correction, unit_rate_is_identity) {
     const cppbox::TimeCorrection<Time> correction(1.0, Time{std::chrono::seconds(1000)});
     const Time time{std::chrono::nanoseconds(1234567890123)};

@@ -18,6 +18,12 @@ public:
     using Time = Time_;
     using Duration = Time::duration;
 
+    /**
+     * @brief Construct the identity correction (rate 1).
+     *
+     */
+    explicit TimeCorrection();
+
     explicit TimeCorrection(const double rate_, const Time& origin_);
 
     /**
