@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.21)
 project(cppbox
-    VERSION 0.2.8
+    VERSION 0.2.9
     DESCRIPTION "Collection of general-purpose C++ functions, classes and utilities"
     LANGUAGES CXX
 )
