@@ -6,6 +6,7 @@
 #include <iomanip>
 #include <sstream>
 
+#include "cppbox/exceptions.hpp"
 #include "cppbox/time.hpp"
 
 namespace cppbox {
@@ -26,7 +27,7 @@ constexpr inline Scalar to_nsec(const TimeOrDuration& time_or_duration) {
     if constexpr (std::is_arithmetic_v<TimeOrDuration>) {
         if constexpr (std::is_unsigned_v<Scalar>) {
             throw_if(time_or_duration < static_cast<TimeOrDuration>(0),
-                    "Attempted to convert negative time or duration to unsigned type.");
+                    "Attempted to convert negative time or duration to unsigned type.", std::invalid_argument);
         }
         return static_cast<Scalar>(time_or_duration);
     } else if constexpr (is_time_point_v<TimeOrDuration>) {
@@ -34,7 +35,7 @@ constexpr inline Scalar to_nsec(const TimeOrDuration& time_or_duration) {
     } else if constexpr (is_duration_v<TimeOrDuration>) {
         if constexpr (std::is_unsigned_v<Scalar>) {
             throw_if(time_or_duration < TimeOrDuration(0),
-                    "Attempted to convert negative time or duration to unsigned type.");
+                    "Attempted to convert negative time or duration to unsigned type.", std::invalid_argument);
         }
         return std::chrono::duration<Scalar, std::nano>(time_or_duration).count();
     }
@@ -46,7 +47,7 @@ constexpr inline Scalar to_sec(const TimeOrDuration& time_or_duration) {
     if constexpr (std::is_arithmetic_v<TimeOrDuration>) {
         if constexpr (std::is_unsigned_v<Scalar>) {
             throw_if(time_or_duration < static_cast<TimeOrDuration>(0),
-                    "Attempted to convert negative time or duration to unsigned type.");
+                    "Attempted to convert negative time or duration to unsigned type.", std::invalid_argument);
         }
         return static_cast<Scalar>(time_or_duration);
     } else if constexpr (is_time_point_v<TimeOrDuration>) {
@@ -54,7 +55,7 @@ constexpr inline Scalar to_sec(const TimeOrDuration& time_or_duration) {
     } else if constexpr (is_duration_v<TimeOrDuration>) {
         if constexpr (std::is_unsigned_v<Scalar>) {
             throw_if(time_or_duration < TimeOrDuration(0),
-                    "Attempted to convert negative time or duration to unsigned type.");
+                    "Attempted to convert negative time or duration to unsigned type.", std::invalid_argument);
         }
         return std::chrono::duration<Scalar>(time_or_duration).count();
     }

@@ -115,15 +115,17 @@ concept IsEnum = std::is_enum_v<T>;
             requires(!std::same_as<Integer, bool>)                                                               \
         explicit SmartEnum(const Integer index) {                                                                \
             if constexpr (std::is_signed_v<Integer>) {                                                           \
-                throw_if(index < 0, "Cannot create from index < 0.");                                            \
+                throw_if(index < 0, "Cannot create from index < 0.", std::out_of_range);                         \
             }                                                                                                    \
-            throw_if(static_cast<std::size_t>(index) >= SmartEnum::count, "Cannot create from index >= count."); \
+            throw_if(static_cast<std::size_t>(index) >= SmartEnum::count,                                        \
+                    "Cannot create from index >= count.", std::out_of_range);                                    \
             identifier = identifiers[index];                                                                     \
         }                                                                                                        \
                                                                                                                  \
         explicit SmartEnum(const std::string& string) {                                                          \
             FOR_EACH(CREATE_SMART_ENUM_IMPL_ADD_IF_ELSE_CASE_CONSTRUCTOR_STRING, __VA_ARGS__) {                  \
-                throw_here("Failed to convert " #SmartEnum " from string \"" + string + "\".");                  \
+                throw_here("Failed to convert " #SmartEnum " from string \"" + string + "\".",                   \
+                        std::invalid_argument);                                                                  \
             }                                                                                                    \
         }                                                                                                        \
                                                                                                                  \

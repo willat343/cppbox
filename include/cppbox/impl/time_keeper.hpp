@@ -64,7 +64,8 @@ inline void OrderedTimeKeeper<Time_>::change_end_time(const Time time_) {
     throw_if(size() >= 2 && time_ < time(size() - 2),
             "Attempted to change end time " + cppbox::to_string(end()) + " to " + cppbox::to_string(time_) +
                     " which would violate monotonic time ordering. Previous time is " +
-                    cppbox::to_string(time(size() - 2)) + ".");
+                    cppbox::to_string(time(size() - 2)) + ".",
+            std::invalid_argument);
     times_[size() - 1] = time_;
 }
 
@@ -73,20 +74,23 @@ inline void OrderedTimeKeeper<Time_>::change_start_time(const Time time_) {
     throw_if(this->empty(), "Start time cannot be changed as there are no times.");
     throw_if(size() >= 2 && time_ > time(1),
             "Attempted to change start time " + cppbox::to_string(start()) + " to " + cppbox::to_string(time_) +
-                    " which would violate monotonic time ordering. Next time is " + cppbox::to_string(time(1)) + ".");
+                    " which would violate monotonic time ordering. Next time is " + cppbox::to_string(time(1)) + ".",
+            std::invalid_argument);
     times_[0] = time_;
 }
 
 template<IsTimePoint Time_>
 inline void OrderedTimeKeeper<Time_>::change_time(const int index, const Time time_) {
     throw_if(index < 0 || index >= size(),
-            "Index " + std::to_string(index) + " out of bounds [0, " + std::to_string(size()) + ").");
+            "Index " + std::to_string(index) + " out of bounds [0, " + std::to_string(size()) + ").",
+            std::out_of_range);
     throw_if((index != 0 && time_ < time(index - 1)) || (index + 1 != size() && time_ > time(index + 1)),
             "Attempted to change time " + cppbox::to_string(time(index)) + " at index " + std::to_string(index) +
                     " to " + cppbox::to_string(time_) +
                     " which would violate monotonic time ordering. Bounds from adjacent times is " +
                     (index == 0 ? "(-inf" : "[" + cppbox::to_string(time(index - 1))) + ", " +
-                    (index + 1 == size() ? "+inf)" : cppbox::to_string(time(index + 1)) + "]") + ".");
+                    (index + 1 == size() ? "+inf)" : cppbox::to_string(time(index + 1)) + "]") + ".",
+            std::invalid_argument);
     times_[index] = time_;
 }
 
@@ -129,7 +133,8 @@ inline int OrderedTimeKeeper<Time_>::find_index_from_start(const Time time_) con
 template<IsTimePoint Time_>
 inline void OrderedTimeKeeper<Time_>::push_back(const Time time_) {
     throw_if(!this->empty() && time_ < end(),
-            "Failed to add time " + cppbox::to_string(time_) + " < end (" + cppbox::to_string(end()) + ").");
+            "Failed to add time " + cppbox::to_string(time_) + " < end (" + cppbox::to_string(end()) + ").",
+            std::invalid_argument);
     times_.push_back(time_);
 }
 
@@ -175,7 +180,7 @@ inline auto OrderedTimeKeeper<Time_>::times() const -> const std::vector<Time>& 
 
 template<IsTimePoint Time_>
 inline auto OrderedTimeKeeper<Time_>::time(const int index) const -> Time {
-    throw_if(index < 0, "Cannot request time at index " + std::to_string(index) + ".");
+    throw_if(index < 0, "Cannot request time at index " + std::to_string(index) + ".", std::out_of_range);
     return times().at(index);
 }
 
@@ -185,7 +190,7 @@ inline UniformTimeKeeper<Time_>::UniformTimeKeeper() : UniformTimeKeeper(to_time
 template<IsTimePoint Time_>
 inline UniformTimeKeeper<Time_>::UniformTimeKeeper(const Time start_, const Duration interval_)
     : start_(start_), interval_(interval_) {
-    throw_if(interval_ == Duration::zero(), "UniformTimeKeeper interval cannot be zero.");
+    throw_if(interval_ == Duration::zero(), "UniformTimeKeeper interval cannot be zero.", std::invalid_argument);
 }
 
 template<IsTimePoint Time_>

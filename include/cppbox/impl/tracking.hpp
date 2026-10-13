@@ -158,7 +158,8 @@ inline void Tracking<Element_, Time_>::update(const Time update_time, const Elem
         tracking_.emplace_back(update_time, element);
     } else if (update_time < tracking_.end_time()) {
         throw_here("Tracking update time (" + cppbox::to_string(update_time) + ") precedes last update time (" +
-                   cppbox::to_string(tracking_.end_time()) + ").");
+                           cppbox::to_string(tracking_.end_time()) + ").",
+                std::invalid_argument);
     } else if (tracking_.size() >= 2 && tracking_.element(tracking_.size() - 1) == element &&
                tracking_.element(tracking_.size() - 2) == element) {
         // Update end time when tracking does not change for last two elements
@@ -172,7 +173,7 @@ inline void Tracking<Element_, Time_>::update(const Time update_time, const Elem
 template<typename Element_, IsTimePoint Time_>
 inline int Tracking<Element_, Time_>::get_index(const Time time) const {
     const int index = tracking_.time_keeper().find_index(time);
-    throw_if(index < 0, "No tracking before query time " + cppbox::to_string(time) + ".");
+    throw_if(index < 0, "No tracking before query time " + cppbox::to_string(time) + ".", std::out_of_range);
     return index;
 }
 

@@ -63,9 +63,10 @@ inline auto TrackingEvents<Time_>::last_time() const -> Time {
 
 template<IsTimePoint Time_>
 inline void TrackingEvents<Time_>::register_event(const Time time) {
-    throw_if(!empty() && time < last_time(), "Event time (" + cppbox::to_string(time) +
-                                                     ") must be after last event time (" +
-                                                     cppbox::to_string(times_.back()) + ").");
+    throw_if(!empty() && time < last_time(),
+            "Event time (" + cppbox::to_string(time) + ") must be after last event time (" +
+                    cppbox::to_string(times_.back()) + ").",
+            std::invalid_argument);
     times_.push_back(time);
 }
 
@@ -75,7 +76,8 @@ inline auto TrackingEvents<Time_>::previous_time(const Time time) const -> Time 
 
     // Quick check for extreme cases
     if (time < first_time()) {
-        throw_if(true, "No event available at or before query time " + cppbox::to_string(time) + ".");
+        throw_if(true, "No event available at or before query time " + cppbox::to_string(time) + ".",
+                std::out_of_range);
     }
     if (time >= last_time()) {
         return last_time();
@@ -95,7 +97,7 @@ inline auto TrackingEvents<Time_>::previous_time_from_end(const Time time) const
             return times_[i];
         }
     }
-    throw_if(true, "No event available at or before query time " + cppbox::to_string(time) + ".");
+    throw_if(true, "No event available at or before query time " + cppbox::to_string(time) + ".", std::out_of_range);
 }
 
 template<IsTimePoint Time_>
@@ -104,7 +106,8 @@ inline auto TrackingEvents<Time_>::previous_time_from_start(const Time time) con
     // Search forward from start
     for (std::size_t i = 0; i < size(); ++i) {
         if (times_[i] > time) {
-            throw_if(i == 0, "No event available at or before query time " + cppbox::to_string(time) + ".");
+            throw_if(i == 0, "No event available at or before query time " + cppbox::to_string(time) + ".",
+                    std::out_of_range);
             return times_[i - 1];
         }
     }
@@ -121,7 +124,7 @@ inline auto TrackingEvents<Time_>::next_time(const Time time) const -> Time {
         return first_time();
     }
     if (time > last_time()) {
-        throw_if(true, "No event available at or after query time " + cppbox::to_string(time) + ".");
+        throw_if(true, "No event available at or after query time " + cppbox::to_string(time) + ".", std::out_of_range);
     }
 
     // Binary search for the general case
@@ -138,7 +141,7 @@ inline auto TrackingEvents<Time_>::next_time_from_start(const Time time) const -
             return times_[i];
         }
     }
-    throw_if(true, "No event available at or after query time " + cppbox::to_string(time) + ".");
+    throw_if(true, "No event available at or after query time " + cppbox::to_string(time) + ".", std::out_of_range);
 }
 
 template<IsTimePoint Time_>
@@ -148,7 +151,7 @@ inline auto TrackingEvents<Time_>::next_time_from_end(const Time time) const -> 
     for (int i = static_cast<int>(size()) - 1; i >= 0; --i) {
         if (times_[i] < time) {
             throw_if(i == static_cast<int>(size()) - 1,
-                    "No event available at or after query time " + cppbox::to_string(time) + ".");
+                    "No event available at or after query time " + cppbox::to_string(time) + ".", std::out_of_range);
             return times_[i + 1];
         }
     }

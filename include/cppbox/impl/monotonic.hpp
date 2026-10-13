@@ -18,7 +18,7 @@ inline void MonotonicIncreasing<T>::try_update(const_reference new_value) {
 
 template<typename T>
 inline void MonotonicIncreasing<T>::update(const_reference new_value) {
-    throw_if(new_value < value_, "Value must monotonically increase.");
+    throw_if(new_value < value_, "Value must monotonically increase.", std::invalid_argument);
     value_ = new_value;
 }
 

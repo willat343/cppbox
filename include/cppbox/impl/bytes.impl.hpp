@@ -38,7 +38,8 @@ CPPBOX_INLINE void BytesDecoder::throw_if_insufficient_bytes_remaining(const std
     throw_if(insufficient_bytes_remaining(num_bytes),
             "BytesDecoder: Buffer overflow in message parsing when trying to read " + std::to_string(num_bytes) +
                     " bytes when only " + std::to_string(bytes_remaining()) + "/" + std::to_string(size()) +
-                    " bytes remaining.");
+                    " bytes remaining.",
+            std::out_of_range);
 }
 
 }
