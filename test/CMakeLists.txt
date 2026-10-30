@@ -18,6 +18,7 @@ add_executable(${TESTS_NAME}
     src/time.cpp
     src/time_correction.cpp
     src/time_interval.cpp
+    src/time_intervals.cpp
     src/time_keeper.cpp
     src/tracking.cpp
     src/tracking_deque.cpp

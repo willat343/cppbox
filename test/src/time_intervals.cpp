@@ -1,0 +1,73 @@
+#include "cppbox/time_intervals.hpp"
+
+#include <gtest/gtest.h>
+
+#include <chrono>
+#include <vector>
+
+TEST(time_intervals, contains) {
+    using Time = std::chrono::steady_clock::time_point;
+    using Duration = Time::duration;
+    using Interval = cppbox::TimeInterval<Time>;
+    // Unsorted and overlapping
+    const std::vector<Interval> intervals{Interval(Time{Duration(10)}, Time{Duration(12)}),
+            Interval(Time{Duration(0)}, Time{Duration(4)}), Interval(Time{Duration(3)}, Time{Duration(6)})};
+    EXPECT_TRUE(cppbox::contains(intervals, Time{Duration(5)}));
+    EXPECT_TRUE(cppbox::contains(intervals, Time{Duration(12)}));
+    EXPECT_FALSE(cppbox::contains(intervals, Time{Duration(8)}));
+    EXPECT_FALSE(cppbox::contains(std::vector<Interval>{}, Time{Duration(0)}));
+}
+
+TEST(time_intervals, contains_sorted_disjoint) {
+    using Time = std::chrono::steady_clock::time_point;
+    using Duration = Time::duration;
+    using Interval = cppbox::TimeInterval<Time>;
+    // Includes an interval of a single time
+    const std::vector<Interval> intervals{Interval(Time{Duration(0)}, Time{Duration(4)}),
+            Interval(Time{Duration(6)}, Time{Duration(6)}), Interval(Time{Duration(10)}, Time{Duration(12)})};
+    for (int t = -1; t <= 13; ++t) {
+        EXPECT_EQ(cppbox::contains_sorted_disjoint(intervals, Time{Duration(t)}),
+                cppbox::contains(intervals, Time{Duration(t)}))
+                << "t = " << t;
+    }
+    EXPECT_TRUE(cppbox::contains_sorted_disjoint(intervals, Time{Duration(6)}));
+    EXPECT_FALSE(cppbox::contains_sorted_disjoint(intervals, Time{Duration(5)}));
+    EXPECT_FALSE(cppbox::contains_sorted_disjoint(std::vector<Interval>{}, Time{Duration(0)}));
+}
+
+TEST(time_intervals, union_of) {
+    using Time = std::chrono::steady_clock::time_point;
+    using Duration = Time::duration;
+    using Interval = cppbox::TimeInterval<Time>;
+    // Unsorted, overlapping, and sharing a bound
+    const std::vector<Interval> intervals{Interval(Time{Duration(10)}, Time{Duration(12)}),
+            Interval(Time{Duration(3)}, Time{Duration(6)}), Interval(Time{Duration(0)}, Time{Duration(4)}),
+            Interval(Time{Duration(6)}, Time{Duration(7)}), Interval(Time{Duration(9)}, Time{Duration(9)})};
+    EXPECT_EQ(cppbox::union_of(intervals),
+            (std::vector<Interval>{Interval(Time{Duration(0)}, Time{Duration(7)}),
+                    Interval(Time{Duration(9)}, Time{Duration(9)}), Interval(Time{Duration(10)}, Time{Duration(12)})}));
+    EXPECT_TRUE(cppbox::union_of(std::vector<Interval>{}).empty());
+}
+
+TEST(time_intervals, intersection_of) {
+    using Time = std::chrono::steady_clock::time_point;
+    using Duration = Time::duration;
+    using Interval = cppbox::TimeInterval<Time>;
+    const std::vector<Interval> lhs{Interval(Time{Duration(0)}, Time{Duration(4)}),
+            Interval(Time{Duration(6)}, Time{Duration(10)})};
+    const std::vector<Interval> rhs{Interval(Time{Duration(2)}, Time{Duration(7)}),
+            Interval(Time{Duration(8)}, Time{Duration(8)}), Interval(Time{Duration(10)}, Time{Duration(20)})};
+    const std::vector<Interval> expected{Interval(Time{Duration(2)}, Time{Duration(4)}),
+            Interval(Time{Duration(6)}, Time{Duration(7)}), Interval(Time{Duration(8)}, Time{Duration(8)}),
+            Interval(Time{Duration(10)}, Time{Duration(10)})};
+    EXPECT_EQ(cppbox::intersection_of_sorted_disjoint(lhs, rhs), expected);
+    EXPECT_EQ(cppbox::intersection_of_sorted_disjoint(rhs, lhs), expected);
+    // Unsorted and overlapping inputs are merged first
+    const std::vector<Interval> rhs_unsorted{Interval(Time{Duration(10)}, Time{Duration(20)}),
+            Interval(Time{Duration(2)}, Time{Duration(5)}), Interval(Time{Duration(8)}, Time{Duration(8)}),
+            Interval(Time{Duration(4)}, Time{Duration(7)})};
+    EXPECT_EQ(cppbox::intersection_of(lhs, rhs_unsorted), expected);
+    // An unbounded interval leaves the other set unchanged
+    EXPECT_EQ(cppbox::intersection_of_sorted_disjoint(lhs, std::vector<Interval>{Interval()}), lhs);
+    EXPECT_TRUE(cppbox::intersection_of_sorted_disjoint(lhs, std::vector<Interval>{}).empty());
+}
