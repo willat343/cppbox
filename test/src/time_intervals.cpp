@@ -35,6 +35,34 @@ TEST(time_intervals, contains_sorted_disjoint) {
     EXPECT_FALSE(cppbox::contains_sorted_disjoint(std::vector<Interval>{}, Time{Duration(0)}));
 }
 
+TEST(time_intervals, times_within) {
+    using Time = std::chrono::steady_clock::time_point;
+    using Duration = Time::duration;
+    using Interval = cppbox::TimeInterval<Time>;
+    // Unsorted and overlapping
+    const std::vector<Interval> intervals{Interval(Time{Duration(10)}, Time{Duration(12)}),
+            Interval(Time{Duration(0)}, Time{Duration(4)}), Interval(Time{Duration(3)}, Time{Duration(6)})};
+    const std::vector<Time> times{Time{Duration(11)}, Time{Duration(-1)}, Time{Duration(0)}, Time{Duration(8)},
+            Time{Duration(6)}};
+    EXPECT_EQ(cppbox::times_within(intervals, times),
+            (std::vector<Time>{Time{Duration(11)}, Time{Duration(0)}, Time{Duration(6)}}));
+    EXPECT_TRUE(cppbox::times_within(std::vector<Interval>{}, times).empty());
+}
+
+TEST(time_intervals, times_within_sorted_disjoint) {
+    using Time = std::chrono::steady_clock::time_point;
+    using Duration = Time::duration;
+    using Interval = cppbox::TimeInterval<Time>;
+    const std::vector<Interval> intervals{Interval(Time{Duration(0)}, Time{Duration(4)}),
+            Interval(Time{Duration(6)}, Time{Duration(6)}), Interval(Time{Duration(10)}, Time{Duration(12)})};
+    std::vector<Time> times;
+    for (int t = 13; t >= -1; --t) {
+        times.emplace_back(Duration(t));
+    }
+    EXPECT_EQ(cppbox::times_within_sorted_disjoint(intervals, times), cppbox::times_within(intervals, times));
+    EXPECT_EQ(cppbox::times_within_sorted_disjoint(intervals, times).size(), 9);
+}
+
 TEST(time_intervals, union_of) {
     using Time = std::chrono::steady_clock::time_point;
     using Duration = Time::duration;

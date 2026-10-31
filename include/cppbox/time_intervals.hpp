@@ -38,6 +38,35 @@ template<IsTimePoint Time, ForwardRangeOf<TimeInterval<Time>> Intervals>
 bool contains_sorted_disjoint(const Intervals& intervals, const Time time);
 
 /**
+ * @brief Get the times contained by any of a set of intervals, in their original order, in linear time per time.
+ *
+ * @tparam Intervals
+ * @tparam Times
+ * @tparam Time time of the intervals, deduced from them
+ * @param intervals intervals, in any order and possibly overlapping
+ * @param times
+ * @return std::vector<Time>
+ */
+template<typename Intervals, typename Times, IsTimePoint Time = typename std::ranges::range_value_t<Intervals>::Time>
+    requires(ForwardRangeOf<Intervals, TimeInterval<Time>> && ForwardRangeOf<Times, Time>)
+std::vector<Time> times_within(const Intervals& intervals, const Times& times);
+
+/**
+ * @brief Get the times contained by any of a set of sorted and disjoint intervals, in their original order, in
+ * logarithmic time per time (for random access ranges).
+ *
+ * @tparam Intervals
+ * @tparam Times
+ * @tparam Time time of the intervals, deduced from them
+ * @param intervals intervals, sorted and disjoint (e.g. from `union_of`)
+ * @param times
+ * @return std::vector<Time>
+ */
+template<typename Intervals, typename Times, IsTimePoint Time = typename std::ranges::range_value_t<Intervals>::Time>
+    requires(ForwardRangeOf<Intervals, TimeInterval<Time>> && ForwardRangeOf<Times, Time>)
+std::vector<Time> times_within_sorted_disjoint(const Intervals& intervals, const Times& times);
+
+/**
  * @brief Get the union of a set of intervals, i.e. the sorted and disjoint intervals of the times within any of them,
  * where overlapping intervals (including those that share a bound) are merged.
  *

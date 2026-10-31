@@ -3,6 +3,7 @@
 
 #include <algorithm>
 #include <functional>
+#include <iterator>
 
 #include "cppbox/time_intervals.hpp"
 
@@ -20,6 +21,24 @@ inline bool contains_sorted_disjoint(const Intervals& intervals, const Time time
     const auto it = std::ranges::lower_bound(intervals, time, std::less<>{},
             [](const TimeInterval<Time>& interval) { return interval.end(); });
     return it != std::ranges::end(intervals) && it->start() <= time;
+}
+
+template<typename Intervals, typename Times, IsTimePoint Time>
+    requires(ForwardRangeOf<Intervals, TimeInterval<Time>> && ForwardRangeOf<Times, Time>)
+std::vector<Time> times_within(const Intervals& intervals, const Times& times) {
+    std::vector<Time> within;
+    std::ranges::copy_if(times, std::back_inserter(within),
+            [&intervals](const Time time) { return contains(intervals, time); });
+    return within;
+}
+
+template<typename Intervals, typename Times, IsTimePoint Time>
+    requires(ForwardRangeOf<Intervals, TimeInterval<Time>> && ForwardRangeOf<Times, Time>)
+std::vector<Time> times_within_sorted_disjoint(const Intervals& intervals, const Times& times) {
+    std::vector<Time> within;
+    std::ranges::copy_if(times, std::back_inserter(within),
+            [&intervals](const Time time) { return contains_sorted_disjoint(intervals, time); });
+    return within;
 }
 
 template<typename Intervals, IsTimePoint Time>
