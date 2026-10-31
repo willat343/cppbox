@@ -104,6 +104,24 @@ double coverage_of(const Intervals& intervals, const TimeInterval<Time>& interva
     return to_sec(span_of(intersection_of(intervals, std::array{interval}))) / to_sec(interval.span());
 }
 
+template<typename Intervals, IsTimePoint Time>
+    requires(ForwardRangeOf<Intervals, TimeInterval<Time>>)
+std::vector<TimeInterval<Time>> complement_of(const Intervals& intervals, const TimeInterval<Time>& interval) {
+    // Add the gap before each interval of the intersection, and the gap after the last
+    std::vector<TimeInterval<Time>> complement;
+    Time start = interval.start();
+    for (const TimeInterval<Time>& covered : intersection_of(intervals, std::array{interval})) {
+        if (start < covered.start()) {
+            complement.emplace_back(start, covered.start());
+        }
+        start = covered.end();
+    }
+    if (start < interval.end()) {
+        complement.emplace_back(start, interval.end());
+    }
+    return complement;
+}
+
 }
 
 #endif

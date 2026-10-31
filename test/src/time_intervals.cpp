@@ -123,3 +123,21 @@ TEST(time_intervals, coverage_of) {
     EXPECT_DOUBLE_EQ(cppbox::coverage_of(std::vector<Interval>{}, Interval(Time{Duration(0)}, Time{Duration(1)})), 0.0);
     EXPECT_THROW(cppbox::coverage_of(intervals, Interval(Time{Duration(1)}, Time{Duration(1)})), std::invalid_argument);
 }
+
+TEST(time_intervals, complement_of) {
+    using Time = std::chrono::steady_clock::time_point;
+    using Duration = Time::duration;
+    using Interval = cppbox::TimeInterval<Time>;
+    // Unsorted and overlapping: within [2, 14], the union [0, 6] and [10, 12] leaves [6, 10] and [12, 14]
+    const std::vector<Interval> intervals{Interval(Time{Duration(10)}, Time{Duration(12)}),
+            Interval(Time{Duration(0)}, Time{Duration(4)}), Interval(Time{Duration(3)}, Time{Duration(6)})};
+    EXPECT_EQ(cppbox::complement_of(intervals, Interval(Time{Duration(2)}, Time{Duration(14)})),
+            (std::vector<Interval>{Interval(Time{Duration(6)}, Time{Duration(10)}),
+                    Interval(Time{Duration(12)}, Time{Duration(14)})}));
+    // Gap at the start, and none at the end as the interval ends where an interval ends
+    EXPECT_EQ(cppbox::complement_of(intervals, Interval(Time{Duration(8)}, Time{Duration(12)})),
+            (std::vector<Interval>{Interval(Time{Duration(8)}, Time{Duration(10)})}));
+    EXPECT_TRUE(cppbox::complement_of(intervals, Interval(Time{Duration(1)}, Time{Duration(5)})).empty());
+    EXPECT_EQ(cppbox::complement_of(std::vector<Interval>{}, Interval(Time{Duration(0)}, Time{Duration(1)})),
+            (std::vector<Interval>{Interval(Time{Duration(0)}, Time{Duration(1)})}));
+}

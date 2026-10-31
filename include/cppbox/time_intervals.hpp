@@ -138,6 +138,20 @@ template<typename Intervals, IsTimePoint Time = typename std::ranges::range_valu
     requires(ForwardRangeOf<Intervals, TimeInterval<Time>>)
 double coverage_of(const Intervals& intervals, const TimeInterval<Time>& interval);
 
+/**
+ * @brief Get the complement of a set of intervals within an interval, i.e. the sorted and disjoint intervals of the
+ * times within the interval but not within any of the set, excluding those with a zero span.
+ *
+ * @tparam Intervals
+ * @tparam Time time of the intervals, deduced from them
+ * @param intervals intervals, in any order and possibly overlapping
+ * @param interval interval
+ * @return std::vector<TimeInterval<Time>>
+ */
+template<typename Intervals, IsTimePoint Time = typename std::ranges::range_value_t<Intervals>::Time>
+    requires(ForwardRangeOf<Intervals, TimeInterval<Time>>)
+std::vector<TimeInterval<Time>> complement_of(const Intervals& intervals, const TimeInterval<Time>& interval);
+
 }
 
 #include "cppbox/impl/time_intervals.hpp"
