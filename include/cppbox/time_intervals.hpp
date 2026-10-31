@@ -111,6 +111,33 @@ template<typename LhsIntervals, typename RhsIntervals,
     requires(ForwardRangeOf<LhsIntervals, TimeInterval<Time>> && ForwardRangeOf<RhsIntervals, TimeInterval<Time>>)
 std::vector<TimeInterval<Time>> intersection_of_sorted_disjoint(const LhsIntervals& lhs, const RhsIntervals& rhs);
 
+/**
+ * @brief Get the total duration of the times within any of a set of intervals, i.e. the span of their union.
+ *
+ * @tparam Intervals
+ * @tparam Time time of the intervals, deduced from them
+ * @param intervals intervals, in any order and possibly overlapping
+ * @return Time::duration
+ */
+template<typename Intervals, IsTimePoint Time = typename std::ranges::range_value_t<Intervals>::Time>
+    requires(ForwardRangeOf<Intervals, TimeInterval<Time>>)
+typename Time::duration span_of(const Intervals& intervals);
+
+/**
+ * @brief Get the share of an interval that is within any of a set of intervals, i.e. the span of their intersection
+ * relative to the span of the interval.
+ *
+ * @tparam Intervals
+ * @tparam Time time of the intervals, deduced from them
+ * @param intervals intervals, in any order and possibly overlapping
+ * @param interval interval, with a non-zero span
+ * @return double in [0, 1]
+ * @throws std::invalid_argument if the interval has a zero span
+ */
+template<typename Intervals, IsTimePoint Time = typename std::ranges::range_value_t<Intervals>::Time>
+    requires(ForwardRangeOf<Intervals, TimeInterval<Time>>)
+double coverage_of(const Intervals& intervals, const TimeInterval<Time>& interval);
+
 }
 
 #include "cppbox/impl/time_intervals.hpp"

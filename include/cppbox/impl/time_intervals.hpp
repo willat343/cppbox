@@ -2,9 +2,11 @@
 #define CPPBOX_IMPL_TIME_INTERVALS_HPP
 
 #include <algorithm>
+#include <array>
 #include <functional>
 #include <iterator>
 
+#include "cppbox/exceptions.hpp"
 #include "cppbox/time_intervals.hpp"
 
 namespace cppbox {
@@ -82,6 +84,24 @@ std::vector<TimeInterval<Time>> intersection_of_sorted_disjoint(const LhsInterva
         }
     }
     return intersection;
+}
+
+template<typename Intervals, IsTimePoint Time>
+    requires(ForwardRangeOf<Intervals, TimeInterval<Time>>)
+typename Time::duration span_of(const Intervals& intervals) {
+    typename Time::duration span{Time::duration::zero()};
+    for (const TimeInterval<Time>& interval : union_of(intervals)) {
+        span += interval.span();
+    }
+    return span;
+}
+
+template<typename Intervals, IsTimePoint Time>
+    requires(ForwardRangeOf<Intervals, TimeInterval<Time>>)
+double coverage_of(const Intervals& intervals, const TimeInterval<Time>& interval) {
+    throw_if(interval.span() == Time::duration::zero(),
+            "Cannot get the coverage of an interval with a zero span.", std::invalid_argument);
+    return to_sec(span_of(intersection_of(intervals, std::array{interval}))) / to_sec(interval.span());
 }
 
 }

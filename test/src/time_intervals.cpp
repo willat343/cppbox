@@ -99,3 +99,27 @@ TEST(time_intervals, intersection_of) {
     EXPECT_EQ(cppbox::intersection_of_sorted_disjoint(lhs, std::vector<Interval>{Interval()}), lhs);
     EXPECT_TRUE(cppbox::intersection_of_sorted_disjoint(lhs, std::vector<Interval>{}).empty());
 }
+
+TEST(time_intervals, span_of) {
+    using Time = std::chrono::steady_clock::time_point;
+    using Duration = Time::duration;
+    using Interval = cppbox::TimeInterval<Time>;
+    // Unsorted and overlapping: the union is [0, 6] and [10, 12]
+    const std::vector<Interval> intervals{Interval(Time{Duration(10)}, Time{Duration(12)}),
+            Interval(Time{Duration(0)}, Time{Duration(4)}), Interval(Time{Duration(3)}, Time{Duration(6)})};
+    EXPECT_EQ(cppbox::span_of(intervals), Duration(8));
+    EXPECT_EQ(cppbox::span_of(std::vector<Interval>{}), Duration(0));
+}
+
+TEST(time_intervals, coverage_of) {
+    using Time = std::chrono::steady_clock::time_point;
+    using Duration = Time::duration;
+    using Interval = cppbox::TimeInterval<Time>;
+    // Unsorted and overlapping: within [2, 12], the union [0, 6] and [10, 12] covers [2, 6] and [10, 12]
+    const std::vector<Interval> intervals{Interval(Time{Duration(10)}, Time{Duration(12)}),
+            Interval(Time{Duration(0)}, Time{Duration(4)}), Interval(Time{Duration(3)}, Time{Duration(6)})};
+    EXPECT_DOUBLE_EQ(cppbox::coverage_of(intervals, Interval(Time{Duration(2)}, Time{Duration(12)})), 0.6);
+    EXPECT_DOUBLE_EQ(cppbox::coverage_of(intervals, Interval(Time{Duration(7)}, Time{Duration(9)})), 0.0);
+    EXPECT_DOUBLE_EQ(cppbox::coverage_of(std::vector<Interval>{}, Interval(Time{Duration(0)}, Time{Duration(1)})), 0.0);
+    EXPECT_THROW(cppbox::coverage_of(intervals, Interval(Time{Duration(1)}, Time{Duration(1)})), std::invalid_argument);
+}
