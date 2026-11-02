@@ -152,6 +152,21 @@ template<typename Intervals, IsTimePoint Time = typename std::ranges::range_valu
     requires(ForwardRangeOf<Intervals, TimeInterval<Time>>)
 std::vector<TimeInterval<Time>> complement_of(const Intervals& intervals, const TimeInterval<Time>& interval);
 
+/**
+ * @brief Get the intervals spanned by the runs of consecutive times at most a maximum gap apart, i.e. the sorted and
+ * disjoint intervals split at each gap of more than `max_gap`. A time more than `max_gap` from both of its neighbours
+ * gives an interval of zero span.
+ *
+ * @tparam Times
+ * @tparam Time time of the times, deduced from them
+ * @param times times, sorted (e.g. sample times)
+ * @param max_gap maximum gap between consecutive times within an interval
+ * @return std::vector<TimeInterval<Time>> empty if there are no times
+ */
+template<typename Times, IsTimePoint Time = std::ranges::range_value_t<Times>>
+    requires(ForwardRangeOf<Times, Time>)
+std::vector<TimeInterval<Time>> intervals_of(const Times& times, const typename Time::duration max_gap);
+
 }
 
 #include "cppbox/impl/time_intervals.hpp"

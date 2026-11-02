@@ -99,8 +99,8 @@ typename Time::duration span_of(const Intervals& intervals) {
 template<typename Intervals, IsTimePoint Time>
     requires(ForwardRangeOf<Intervals, TimeInterval<Time>>)
 double coverage_of(const Intervals& intervals, const TimeInterval<Time>& interval) {
-    throw_if(interval.span() == Time::duration::zero(),
-            "Cannot get the coverage of an interval with a zero span.", std::invalid_argument);
+    throw_if(interval.span() == Time::duration::zero(), "Cannot get the coverage of an interval with a zero span.",
+            std::invalid_argument);
     return to_sec(span_of(intersection_of(intervals, std::array{interval}))) / to_sec(interval.span());
 }
 
@@ -120,6 +120,21 @@ std::vector<TimeInterval<Time>> complement_of(const Intervals& intervals, const 
         complement.emplace_back(start, interval.end());
     }
     return complement;
+}
+
+template<typename Times, IsTimePoint Time>
+    requires(ForwardRangeOf<Times, Time>)
+std::vector<TimeInterval<Time>> intervals_of(const Times& times, const typename Time::duration max_gap) {
+    // Extend the last interval to each time at most the maximum gap after it, otherwise start a new interval
+    std::vector<TimeInterval<Time>> intervals;
+    for (const Time time : times) {
+        if (!intervals.empty() && time - intervals.back().end() <= max_gap) {
+            intervals.back().end() = time;
+        } else {
+            intervals.emplace_back(time, time);
+        }
+    }
+    return intervals;
 }
 
 }

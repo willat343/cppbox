@@ -141,3 +141,18 @@ TEST(time_intervals, complement_of) {
     EXPECT_EQ(cppbox::complement_of(std::vector<Interval>{}, Interval(Time{Duration(0)}, Time{Duration(1)})),
             (std::vector<Interval>{Interval(Time{Duration(0)}, Time{Duration(1)})}));
 }
+
+TEST(time_intervals, intervals_of) {
+    using Time = std::chrono::steady_clock::time_point;
+    using Duration = Time::duration;
+    using Interval = cppbox::TimeInterval<Time>;
+    // Split at the gaps of more than 3: [0, 4] (a gap of exactly 3), [9, 9] (isolated) and [14, 15]
+    const std::vector<Time> times{Time{Duration(0)}, Time{Duration(1)}, Time{Duration(4)}, Time{Duration(9)},
+            Time{Duration(14)}, Time{Duration(15)}};
+    EXPECT_EQ(cppbox::intervals_of(times, Duration(3)),
+            (std::vector<Interval>{Interval(Time{Duration(0)}, Time{Duration(4)}),
+                    Interval(Time{Duration(9)}, Time{Duration(9)}), Interval(Time{Duration(14)}, Time{Duration(15)})}));
+    EXPECT_EQ(cppbox::intervals_of(times, Duration(5)),
+            (std::vector<Interval>{Interval(Time{Duration(0)}, Time{Duration(15)})}));
+    EXPECT_TRUE(cppbox::intervals_of(std::vector<Time>{}, Duration(3)).empty());
+}
