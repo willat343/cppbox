@@ -12,6 +12,7 @@ add_executable(${TESTS_NAME}
     src/map.cpp
     src/monotonic.cpp
     src/parse.cpp
+    src/ranges.cpp
     src/sequenced_map.cpp
     src/temporal_vector.cpp
     src/thread.cpp
