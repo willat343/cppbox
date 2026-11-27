@@ -5,6 +5,7 @@ add_executable(${TESTS_NAME}
     src/array.cpp
     src/bytes.cpp
     src/classifiers.cpp
+    src/colour.cpp
     src/constexpr_hash.cpp
     src/constexpr_map.cpp
     src/downcast.cpp
